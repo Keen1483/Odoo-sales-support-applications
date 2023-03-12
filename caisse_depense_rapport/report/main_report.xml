@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- LANDSCAPE A4 FORMAT FOR PDF -->
+        <record id="print_report_landscape1" model="report.paperformat">
+            <field name="name"> Payment BP Landscape</field>
+            <field name="default" eval="False"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">90</field>
+        </record>
+
+ <!-- format des tikect de caisse  -->
+        <record id="paperformat_bp_acheteur_report" model="report.paperformat">
+            <field name="name">pro_fn</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">595</field>
+            <field name="page_width">73</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">40</field>
+            <field name="margin_right">1</field>
+            <field name="margin_left">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+        <!-- RPPORT DE LA VUE LISTE DU MODEL global.account.bash.payment -->
+        <!-- LANDSCAPE PDF REPORT PRINT BUTTON -->
+                    <!-- <report 
+                    id="create_achat_report"
+                    model="rapport.acheteur"
+                    report_type="qweb-pdf"
+                    string="Rapport BP"
+                    name="caisse_depense_rapport.report_bp_acheteur"
+                    print_report_name ="'Rapport_BP_acheteur_%s' %(time.strftime('%d/%m/%Y'))"
+                    file="caisse_depense_rapport.report_bp_acheteur"
+                    paperformat="caisse_depense_rapport.paperformat_bp_acheteur_report"
+                    /> -->
+        <!-- RPPORT DE LA VUE LISTE DU MODEL global.account.bash.payment -->
+        <!-- LANDSCAPE PDF REPORT PRINT BUTTON -->
+        <record id="bash_landscape_report_btn_caisse_print" model="ir.actions.report">
+            <field name="paperformat_id" ref="caisse_depense_rapport.print_report_landscape1"/>
+            <field name="name"> Payment BP PDF</field>
+            <field name="model">caisse_depense_rapport.bpjournalier</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">caisse_depense_rapport.template_bash_payment_btn_print_caisse</field>
+            <field name="file">caisse_depense_rapport.template_bash_payment_btn_print_caisse</field>
+            <field name="binding_model_id" ref="model_caisse_depense_rapport_bpjournalier"/>
+            <field name="binding_type">report</field>
+            <field name="menu">True</field>
+        </record>
+
+         <!-- RPPORT DE LA VUE LISTE DU MODEL global.account.bash.payment -->
+        <!-- LANDSCAPE PDF REPORT PRINT BUTTON -->
+        <record id="bash_landscape_report_btn_rapport_caisse_print" model="ir.actions.report">
+            <field name="paperformat_id" ref="caisse_depense_rapport.print_report_landscape1"/>
+            <field name="name"> Payment BP PDF</field>
+            <field name="model">rapport.acheteur</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">caisse_depense_rapport.template_bash_payment_btn_print_caisse_rapport</field>
+            <field name="file">caisse_depense_rapport.template_bash_payment_btn_print_caisse_rapport</field>
+            <field name="binding_model_id" ref="model_rapport_acheteur"/>
+            <field name="binding_type">report</field>
+            <field name="menu">True</field>
+        </record>
+
+         <!-- imprimer les retour de bp sur le ticket -->
+                     <report 
+                    id="create_achat_report"
+                    model="caisse_depense_rapport.bpjournaliercaisse_depense_rapport.bpjournalier"
+                    report_type="qweb-pdf"
+                    string=" retour BP"
+                    name="caisse_depense_rapport.retour_bp_acheteur"
+                    print_report_name ="'retour_BP_acheteur_%s' %(time.strftime('%d/%m/%Y'))"
+                    file="caisse_depense_rapport.retour_bp_acheteur"
+                    paperformat="caisse_depense_rapport.paperformat_bp_acheteur_report"
+                    /> 
+
+        
+    </data>
+</odoo>

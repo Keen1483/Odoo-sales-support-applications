@@ -1,0 +1,9 @@
+<templates>
+    <t t-extend="ListView.buttons">
+        <t t-jquery="div.o_list_buttons" t-operation="append">
+            <button id="btn-cond" title="bash non imprimé(s)" type="button" t-if='widget.modelName == "global.account.bash.payment"'
+                    class="bash-actifs btn btn-primary" style="display:none">Actifs
+            </button>
+        </t>
+    </t>
+</templates>

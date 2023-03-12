@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data >
+        
+        <record id="group_base_rapport_depense" model="res.groups">
+            <field name="name">rapport BP</field>
+            <field name="comment">rapport BP</field>
+        </record>
+
+        <record id="group_bp_rejeter" model="res.groups">
+            <field name="name">BP rejeté</field>
+            <field name="comment">BP rejeté</field>
+        </record>
+        <record id="group_cancel_boutton" model="res.groups">
+            <field name="name">rapport cancel button</field>
+            <field name="comment">rapport cancel button</field>
+        </record>
+    
+    </data>
+    
+</odoo>

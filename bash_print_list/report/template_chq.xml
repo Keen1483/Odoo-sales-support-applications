@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="template_bash_report_chq">
+<!--            <t t-set="data_report_orientation" t-value="True"/>-->
+<!--            <t t-set="data_report_margin_top" t-value="50"/>-->
+<!--            <t t-set="data_report_margin_bottom" t-value="30"/>-->
+<!--            <t t-set="data_report_margin_left" t-value="7"/>-->
+<!--            <t t-set="data_report_margin_right" t-value="7"/>-->
+<!--            <t t-set="data_report_header_spacing" t-value="55"/>-->
+<!--            <t t-set="data_report_dpi" t-value="90"/>-->
+
+        <t t-if="not o" t-set="o" t-value="doc"/>
+            <t t-set="nbl" t-value="o.nombre_factures()"/>
+            <t t-set="en_lettre" t-value="o.amount_text()"/>
+            <t t-set="total4" t-value="o.total4_funct()"/>
+            <t t-set="total3" t-value="o.total3_funct()"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+
+
+
+            <div class="page" style="margin:100px;">
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+                    <div class="header">
+                            <div class="row">
+                                <div class="col-3" style="padding:0px;margin:0px;">
+                                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height:60px;" alt="Logo"/>
+                                </div>
+                                <div class="col-9 text-right" t-field="company.report_header" name="moto"/>
+                            </div>
+
+                            <div t-if="company.logo or company.report_header" class="row">
+                                <div class="col-12" style="padding:0px;margin:0px;">
+                                    <div style="border-bottom: 1px solid black;"/>
+                                </div>
+                            </div>
+
+                            <div class="row" style="font-size:10px">
+                                <div class="col-4">
+                                    <span><b>CR  </b></span>
+                                    <span t-field="o.create_date"></span>
+                                    <span t-esc="o.get_initiaux(o.sudo().create_uid.name)"/>
+                                </div>
+
+                                <div class="col-4">
+                                    <span><b>MJ  </b></span>
+                                    <span t-field="o.write_date"/>
+                                    <t t-foreach="o.sudo().write_uid" t-as="ben">
+                                        <span t-esc="o.get_initiaux(ben.name)"/>
+                                    </t>
+                                </div>
+
+                                <div class="col-4">
+                                    <span><b>P   </b></span>
+                                    <span t-esc="time.strftime('%d/%m/%Y %H:%M:%S')"/>
+                                    <t><span t-esc="o.get_initiaux(user.name)"/></t>
+                                </div>
+                            </div>
+
+                            <t t-set="k" t-value="o.name"/>
+                            <div class="row">
+                                <div class="col-10">
+                                    <t t-if="o.name==False"><h3 style="margin-top:10px;"><strong>Reçu de Paiement:</strong></h3>
+                                    </t>
+
+                                    <t t-else="">
+                                       <h3 style="margin-top:10px;"><strong>Reçu de Paiement: <t t-esc="k.split('/')[0]"/>/<t t-esc="k.split('/')[1]"/>/<t t-esc="k.split('/')[-1]"/></strong></h3>
+                                    </t>
+                                </div>
+
+                                <div class="col-2">
+                                    <div class="text-right">
+                                        <div t-field="company.report_footer"/>
+                                        <div t-if="report_type == 'pdf'">
+                                            Page: <span class="page"/> / <span class="topage"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt32">
+                                <div class="col-12" t-if="o.payment_date" >
+                                    <strong>Fournisseur: </strong><span style="font-size:22px;" t-field="o.partner_id"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Date Paiement: </strong> <span t-field="o.payment_date"/>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Banque: </strong><span t-field="o.journal_id.name"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Méthode de Paiement: </strong><span>Chèque </span>
+                                </div>
+                                <div class="col-6">
+                                    <!--<strong>No Chèque: </strong><span t-field="o.no_cheque"/>-->
+                                    <strong>No Chèque: </strong><span t-field="o.document_line_id"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6" t-if="o.amount">
+                                    <strong>Montant Paiement: </strong><span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                 </div>
+                                <div class="col-6">
+                                    <strong>Nombre de Facture: </strong><span t-esc="nbl[o.id]"/>
+                                </div>
+                            </div>
+
+                            <div class="mb64" t-if="o.journal_id">
+                                <div>
+                                    <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                                </div>
+                            </div>
+                    </div>
+                </t>
+                <t t-set="o" t-value="o.with_context(lang=lang)"/>
+
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+
+                    <div class="article mt64" style="margin-top:15px;">
+
+                        <table class="table table-sm" style="font-size:13px;">
+                            <thead>
+                                <tr>
+                                    <th><span>No Ligne</span></th>
+                                    <th><span>Date Facture</span></th>
+                                    <th><span>Numéro Facture</span></th>
+                                    <th class="text-right"><span>Montant Original</span></th>
+                                    <th class="text-right"><span>Montant Payé</span></th>
+                                    <th class="text-right"><span>Balance</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr t-foreach="o.payment_lines" t-as="inv">
+                                    <td><span t-esc="inv_index + 1" /></td>
+                                    <td><span t-field="inv.date_invoice"/></td>
+                                    <td><span t-field="inv.invoice_id.reference"/></td>
+                                    <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'"><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                    <td class="text-right" t-else="" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+
+                                    <td class="text-right">
+                                        <t t-if="inv.invoice_id.type == 'in_refund'">
+                                             -<span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                        </t>
+                                    </td>
+                                    <!--<td class="text-right"><span t-esc="o._get_invoice_payment_amount(inv)" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>-->
+                                    <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'"><span t-esc="inv.amount_invoice + inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                    <td class="text-right" t-else=""><span t-esc="inv.amount_invoice - inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-right"></td>
+                                    <td class="text-right"></td>
+                                    <td class="text-right border-black"><br/></td>
+                                    <td class="text-right border-black"><br/></td>
+                                    <td class="text-right border-black"><br/></td>
+                                    <td class="text-right border-black"><br/></td>
+                                </tr>
+
+                                <tr style="border-top:1px solid black;padding-top:15px;">
+
+                                    <td class="text-right" style="border-top:1px solid white;"></td>
+                                    <td class="text-right" style="border-top:1px solid white;"></td>
+                                    <td class="text-right border-black" style="border-top:1px solid black; font-size:16px;"><strong>Total :</strong></td>
+                                    <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-esc="total4[o.id]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                                    <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-field="o.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                                    <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-esc="total3[o.id]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </t>
+
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+                    <div class="footer position-relative">
+
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12" >
+                                    <div class="row">
+                                        <div class="col-7" >
+                                            <strong><span style="text-decoration:underline;">Observation:  </span><span t-field="o.communication"/></strong>
+                                            <div class="row" style="margin-top:90px;">
+                                                <div class="col-3" >
+                                                    <strong><span>Ordonnateur</span></strong>
+                                                </div>
+                                                <div class="col-3" >
+                                                    <strong><span>Caissier:</span></strong>
+                                                </div>
+                                                <div class="col-3">
+                                                    <strong><span>Comptable:</span></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                         <div class="col-5" style=" margin-top:10px;">
+                                            <strong><span>Bénéficiaire:</span></strong>
+                                             <div class="col-12" style="margin-top:20px">
+                                                <div class="row">
+                                                     <div class="col-3">
+                                                         <span>Nom:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                             </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                         <span>No CNI:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+
+                                             <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                         <span>Date:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                         <span>Signature:</span>
+                                                     </div>
+                                                     <div class="col-8" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </t>
+
+            </div>
+            <div class="page" style=" page-break-before: always;">
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+                    <div class="header">
+                        <div class="row">
+                        <div class="col-3" style="padding:0px;margin:0px;">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height:60px;" alt="Logo"/>
+                        </div>
+                        <div class="col-9 text-right" t-field="company.report_header" name="moto"/>
+                        </div>
+                        <div t-if="company.logo or company.report_header" class="row">
+                            <div class="col-12" style="padding:0px;margin:0px;">
+                                <div style="border-bottom: 1px solid black;"/>
+                            </div>
+                        </div>
+
+                        <div class="row" style="font-size:10px">
+                            <div class="col-4">
+                                <span><b>CR  </b></span>
+                                <span t-field="o.create_date"></span>
+                                <span t-esc="o.get_initiaux(o.sudo().create_uid.name)"/>
+                            </div>
+
+                            <div class="col-4">
+                                <span><b>MJ  </b></span>
+                                <span t-field="o.write_date"/>
+                                <t t-foreach="o.sudo().write_uid" t-as="ben">
+                                    <span t-esc="o.get_initiaux(ben.name)"/>
+                                </t>
+                            </div>
+                            <div class="col-4">
+                                <span><b>P   </b></span>
+                                <span t-esc="time.strftime('%d/%m/%Y %H:%M:%S')"/>
+                                <t><span t-esc="o.get_initiaux(user.name)"/></t>
+                            </div>
+                        </div>
+
+                        <t t-set="k" t-value="o.name"/>
+                        <div class="row">
+                            <div class="col-10">
+                                <t t-if="o.name==False"><h3 style="margin-top:10px;"><strong>Reçu de Paiement:</strong></h3>
+                                </t>
+
+                                <t t-else="">
+                                   <h3 style="margin-top:10px;"><strong>Reçu de Paiement: <t t-esc="k.split('/')[0]"/>/<t t-esc="k.split('/')[1]"/>/<t t-esc="k.split('/')[-1]"/></strong></h3>
+                                </t>
+                            </div>
+                            <div class="col-2">
+                                <div class="text-right">
+
+                                    <div t-field="company.report_footer"/>
+                                    <div t-if="report_type == 'pdf'">
+                                        Page: <span class="page"/> / <span class="topage"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row mt32">
+
+                            <div class="col-12" t-if="o.payment_date" >
+                                <strong>Fournisseur: </strong><span style="font-size:22px;" t-field="o.partner_id"/>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+
+                                <strong>Date Paiement: </strong> <span t-field="o.payment_date"/>
+
+                            </div>
+                            <div class="col-6">
+
+                                <strong>Banque: </strong><span t-field="o.journal_id.name"/>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+
+                                <strong>Méthode de Paiement: </strong><span>Chèque </span>
+
+
+                            </div>
+                            <div class="col-6">
+                                <strong>No Chèque: </strong><span t-field="o.document_line_id"/>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-6" t-if="o.amount">
+                                <strong>Montant Paiement: </strong><span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                             </div>
+                            <div class="col-6">
+                                <strong>Nombre de Facture: </strong><span t-esc="nbl[o.id]"/>
+                            </div>
+
+                        </div>
+
+                        <div class="mb64" t-if="o.journal_id">
+                            <div>
+                                <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                            </div>
+
+                        </div>
+                    </div>
+                </t>
+                <t t-set="o" t-value="o.with_context(lang=lang)"/>
+
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+
+                    <div class="article mt64" style="margin-top:15px;">
+
+                    <table class="table table-sm" style="font-size:13px;">
+                        <thead>
+                            <tr>
+                                <th><span>No Ligne</span></th>
+                                <th><span>Date Facture</span></th>
+                                <th><span>Numéro Facture</span></th>
+                                <th class="text-right"><span>Montant Original</span></th>
+                                <th class="text-right"><span>Montant Payé</span></th>
+                                <th class="text-right"><span>Balance</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr t-foreach="o.payment_lines" t-as="inv">
+                                <td><span t-esc="inv_index + 1" /></td>
+                                <td><span t-field="inv.date_invoice"/></td>
+                                <td><span t-field="inv.invoice_id.reference"/></td>
+                                <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'"><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                <td class="text-right" t-else="" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+
+                                <td class="text-right">
+                                    <t t-if="inv.invoice_id.type == 'in_refund'">
+                                         -<span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                    </t>
+                                </td>
+                                <!--<td class="text-right"><span t-esc="o._get_invoice_payment_amount(inv)" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>-->
+                                <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'"><span t-esc="inv.amount_invoice + inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                <td class="text-right" t-else=""><span t-esc="inv.amount_invoice - inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right border-black"><br/></td>
+                                <td class="text-right border-black"><br/></td>
+                                <td class="text-right border-black"><br/></td>
+                                <td class="text-right border-black"><br/></td>
+                            </tr>
+
+                            <tr style="border-top:1px solid black;padding-top:15px;">
+
+                                <td class="text-right" style="border-top:1px solid white;"></td>
+                                <td class="text-right" style="border-top:1px solid white;"></td>
+                                <td class="text-right border-black" style="border-top:1px solid black; font-size:16px;"><strong>Total :</strong></td>
+                                <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-esc="total4[o.id]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                                <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-field="o.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                                <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-esc="total3[o.id]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    </div>
+                </t>
+
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+                    <div class="footer">
+
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12" >
+                                    <div class="row">
+                                        <div class="col-7" >
+                                            <strong><span style="text-decoration:underline;">Observation:  </span><span t-field="o.communication"/></strong>
+                                            <div class="row" style="margin-top:90px;">
+                                                <div class="col-3" >
+                                                    <strong><span>Ordonnateur</span></strong>
+                                                </div>
+                                                <div class="col-3" >
+                                                    <strong><span>Caissier:</span></strong>
+                                                </div>
+                                                <div class="col-3">
+                                                    <strong><span>Comptable:</span></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                         <div class="col-5" style=" margin-top:10px;">
+                                            <strong><span>Bénéficiaire:</span></strong>
+                                             <div class="col-12" style="margin-top:20px">
+                                                <div class="row">
+                                                     <div class="col-3">
+                                                         <span>Nom:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                             </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                         <span>No CNI:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+
+                                             <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                         <span>Date:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                         <span>Signature:</span>
+                                                     </div>
+                                                     <div class="col-8" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </t>
+
+            </div>
+            <div class="page" style=" page-break-before: always;">
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+                    <div class="header">
+                        <div class="row">
+                        <div class="col-3" style="padding:0px;margin:0px;">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height:60px;" alt="Logo"/>
+                        </div>
+                        <div class="col-9 text-right" t-field="company.report_header" name="moto"/>
+                        </div>
+                        <div t-if="company.logo or company.report_header" class="row">
+                            <div class="col-12" style="padding:0px;margin:0px;">
+                                <div style="border-bottom: 1px solid black;"/>
+                            </div>
+                        </div>
+
+                        <div class="row" style="font-size:10px">
+                            <div class="col-4">
+                                <span><b>CR  </b></span>
+                                <span t-field="o.create_date"></span>
+                                <span t-esc="o.get_initiaux(o.sudo().create_uid.name)"/>
+                            </div>
+
+                            <div class="col-4">
+                                <span><b>MJ  </b></span>
+                                <span t-field="o.write_date"/>
+                                <t t-foreach="o.sudo().write_uid" t-as="ben">
+                                    <span t-esc="o.get_initiaux(ben.name)"/>
+                                </t>
+                            </div>
+                            <div class="col-4">
+                                <span><b>P   </b></span>
+                                <span t-esc="time.strftime('%d/%m/%Y %H:%M:%S')"/>
+                                <t><span t-esc="o.get_initiaux(user.name)"/></t>
+                            </div>
+                        </div>
+
+                        <t t-set="k" t-value="o.name"/>
+                        <div class="row">
+                            <div class="col-10">
+                                <t t-if="o.name==False"><h3 style="margin-top:10px;"><strong>Reçu de Paiement:</strong></h3>
+                                </t>
+
+                                <t t-else="">
+                                   <h3 style="margin-top:10px;"><strong>Reçu de Paiement: <t t-esc="k.split('/')[0]"/>/<t t-esc="k.split('/')[1]"/>/<t t-esc="k.split('/')[-1]"/></strong></h3>
+                                </t>
+                            </div>
+                            <div class="col-2">
+                                <div class="text-right">
+
+                                    <div t-field="company.report_footer"/>
+                                    <div t-if="report_type == 'pdf'">
+                                        Page: <span class="page"/> / <span class="topage"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row mt32">
+
+                            <div class="col-12" t-if="o.payment_date" >
+                                <strong>Fournisseur: </strong><span style="font-size:22px;" t-field="o.partner_id"/>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+
+                                <strong>Date Paiement: </strong> <span t-field="o.payment_date"/>
+
+                            </div>
+                            <div class="col-6">
+
+                                <strong>Banque: </strong><span t-field="o.journal_id.name"/>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+
+                                <strong>Méthode de Paiement: </strong><span>Chèque </span>
+
+
+                            </div>
+                            <div class="col-6">
+                                <strong>No Chèque: </strong><span t-field="o.document_line_id"/>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-6" t-if="o.amount">
+                                <strong>Montant Paiement: </strong><span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                             </div>
+                            <div class="col-6">
+                                <strong>Nombre de Facture: </strong><span t-esc="nbl[o.id]"/>
+                            </div>
+
+                        </div>
+
+                        <div class="mb64" t-if="o.journal_id">
+                            <div>
+                                <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                            </div>
+
+                        </div>
+                    </div>
+                </t>
+                <t t-set="o" t-value="o.with_context(lang=lang)"/>
+
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+
+                    <div class="article mt64" style="margin-top:15px;">
+
+                    <table class="table table-sm" style="font-size:13px;">
+                        <thead>
+                            <tr>
+                                <th><span>No Ligne</span></th>
+                                <th><span>Date Facture</span></th>
+                                <th><span>Numéro Facture</span></th>
+                                <th class="text-right"><span>Montant Original</span></th>
+                                <th class="text-right"><span>Montant Payé</span></th>
+                                <th class="text-right"><span>Balance</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr t-foreach="o.payment_lines" t-as="inv">
+                                <td><span t-esc="inv_index + 1" /></td>
+                                <td><span t-field="inv.date_invoice"/></td>
+                                <td><span t-field="inv.invoice_id.reference"/></td>
+                                <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'"><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                <td class="text-right" t-else="" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+
+                                <td class="text-right">
+                                    <t t-if="inv.invoice_id.type == 'in_refund'">
+                                         -<span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                    </t>
+                                </td>
+                                <!--<td class="text-right"><span t-esc="o._get_invoice_payment_amount(inv)" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>-->
+                                <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'"><span t-esc="inv.amount_invoice + inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                <td class="text-right" t-else=""><span t-esc="inv.amount_invoice - inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td class="text-right"></td>
+                                <td class="text-right"></td>
+                                <td class="text-right border-black"><br/></td>
+                                <td class="text-right border-black"><br/></td>
+                                <td class="text-right border-black"><br/></td>
+                                <td class="text-right border-black"><br/></td>
+                            </tr>
+
+                            <tr style="border-top:1px solid black;padding-top:15px;">
+
+                                <td class="text-right" style="border-top:1px solid white;"></td>
+                                <td class="text-right" style="border-top:1px solid white;"></td>
+                                <td class="text-right border-black" style="border-top:1px solid black; font-size:16px;"><strong>Total :</strong></td>
+                                <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-esc="total4[o.id]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                                <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-field="o.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                                <td class="text-right border-black" style="border-top:1px solid black;font-size:16px;"><strong><span t-esc="total3[o.id]" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    </div>
+                </t>
+
+                <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+                    <div class="footer">
+
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12" >
+                                    <div class="row">
+                                        <div class="col-7" >
+                                            <strong><span style="text-decoration:underline;">Observation:  </span><span t-field="o.communication"/></strong>
+                                            <div class="row" style="margin-top:90px;">
+                                                <div class="col-3" >
+                                                    <strong><span>Ordonnateur</span></strong>
+                                                </div>
+                                                <div class="col-3" >
+                                                    <strong><span>Caissier:</span></strong>
+                                                </div>
+                                                <div class="col-3">
+                                                    <strong><span>Comptable:</span></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                         <div class="col-5" style=" margin-top:10px;">
+                                            <strong><span>Bénéficiaire:</span></strong>
+                                             <div class="col-12" style="margin-top:20px">
+                                                <div class="row">
+                                                     <div class="col-3">
+                                                         <span>Nom:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                             </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                         <span>No CNI:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+
+                                             <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                         <span>Date:</span>
+                                                     </div>
+                                                     <div class="col-9" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                         <span>Signature:</span>
+                                                     </div>
+                                                     <div class="col-8" style="border-bottom:1px solid black">
+
+                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </t>
+
+            </div>
+
+        </template>
+    </data>
+</odoo>

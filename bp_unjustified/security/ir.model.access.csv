@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bp_unjustified_bp_unjustified,bp_unjustified.bp_unjustified,model_bp_unjustified_bp_unjustified,,1,0,0,0

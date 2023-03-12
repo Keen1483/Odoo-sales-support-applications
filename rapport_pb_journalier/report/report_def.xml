@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <!-- LANDSCAPE A4 FORMAT FOR PDF -->
+        <record id="report_bp_landscape" model="report.paperformat">
+            <field name="name">BP Report Landscape</field>
+            <field name="default" eval="False"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">0</field>
+            <field name="margin_right">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">10</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <!-- LANDSCAPE PDF REPORT PRINT BUTTON -->
+        <record id="bp_landscape_pdf_report" model="ir.actions.report">
+            <field name="paperformat_id" ref="rapport_pb_journalier.report_bp_landscape"/>
+            <field name="name">BP Jounalier PDF</field>
+            <field name="model">caisse_depense_rapport.bpjournalier</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">rapport_pb_journalier.template_bp_landscape_report</field>
+            <field name="file">rapport_pb_journalier.template_bp_landscape_report</field>
+            <field name="binding_model_id" ref="model_caisse_depense_rapport_bpjournalier"/>
+            <field name="binding_type">report</field>
+            <field name="menu">True</field>
+        </record>
+
+        <!-- LANDSCAPE EXCEL REPORT PRINT BUTTON -->
+        <record id="bp_landscape_xls_report" model="ir.actions.report">
+            <field name="name">BP Jounalier Excel</field>
+            <field name="model">caisse_depense_rapport.bpjournalier</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_name">rapport_pb_journalier.rapport_bp_journalier_xls</field>
+            <field name="report_file">rapport_pb_journalier.rapport_bp_journalier_xls</field>
+            <field name="binding_model_id" ref="model_caisse_depense_rapport_bpjournalier"/>
+            <field name="binding_type">report</field>
+            <field name="menu">True</field>
+        </record>
+    </data>
+</odoo>

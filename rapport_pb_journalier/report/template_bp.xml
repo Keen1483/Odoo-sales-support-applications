@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="template_bp_landscape_report">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <style>
+                        table {
+                            font-size: 0.8em;
+                            font-family: Verdana, sans-serif;
+                            border-collapse: collapse;
+                        }
+                        td, th {
+                            border: 1px solid gray;
+                            padding: 0 0.4em;
+                            white-space: nowrap;
+                        }
+                    </style>
+                    <div class="page">
+                        <table>
+                            <thead>
+                                <tr class="text-center">
+                                    <th colspan="5">Bons Provisoires</th>
+                                    <th colspan="3">Factures</th>
+                                    <th colspan="3">Retour BP</th>
+                                    <th colspan="3">Gardés</th>
+                                </tr>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                    <th>N°</th>
+                                    <th>Date</th>
+                                    <th>Montant</th>
+                                    <th>N°</th>
+                                    <th>Date</th>
+                                    <th>Montant</th>
+                                    <th>Date</th>
+                                    <th>Montant gardé</th>
+                                    <th>Montant retiré</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="o">
+                                    <t t-set="value" t-value="o.pdf_data()"/>
+                                    <t t-foreach="value" t-as="record">
+                                        <tr>
+                                            <t t-foreach="value[record]" t-as="item">
+                                                <t t-if="item == 'bp_amount' or item == 'fa_amount' or item == 'gd_k_amount' or item == 'gd_r_amount'">
+                                                    <td style="text-align:right;"><span t-esc="value[record][item]"/></td>
+                                                </t>
+                                                <t t-if="not item == 'bp_amount' and not item == 'fa_amount' and not item == 'gd_k_amount' and not item == 'gd_r_amount'">
+                                                    <td><span t-esc="value[record][item]"/></td>
+                                                </t>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <t t-set="sum_bp" t-value="0"/>
+                                <t t-set="sum_fa" t-value="0"/>
+                                <t t-set="sum_rt" t-value="0"/>
+                                <t t-set="sum_kk" t-value="0"/>
+                                <t t-set="sum_kr" t-value="0"/>
+                                <t t-foreach="docs" t-as="o">
+                                    <t t-set="sums" t-value="o.sum_amount()"/>
+                                    <t t-set="sum_bp" t-value="sum_bp + sums['sum_bp']"/>
+                                    <t t-set="sum_fa" t-value="sum_fa + sums['sum_fa']"/>
+                                    <t t-set="sum_rt" t-value="sum_rt + sums['sum_rt']"/>
+                                    <t t-set="sum_kk" t-value="sum_kk + sums['sum_kk']"/>
+                                    <t t-set="sum_kr" t-value="sum_kr + sums['sum_kr']"/>
+                                </t>
+                                <tr>
+                                    <th colspan="3">Total</th>
+                                    <th><span t-esc="sum_bp"/></th>
+                                    <th colspan="3"></th>
+                                    <th><span t-esc="sum_fa"/></th>
+                                    <th colspan="2"></th>
+                                    <th><span t-esc="sum_rt"/></th>
+                                    <th colspan="1"></th>
+                                    <th><span t-esc="sum_kk"/></th>
+                                    <th><span t-esc="sum_kr"/></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </t>
+
+            </t>
+        </template>
+    </data>
+</odoo>

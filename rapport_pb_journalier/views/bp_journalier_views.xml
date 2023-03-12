@@ -1,0 +1,14 @@
+<odoo>
+  <data>
+    <record id="rapport_bp_journalier_form" model="ir.ui.view">
+      <field name="name">rapport.bp.journalier</field>
+      <field name="model">caisse_depense_rapport.bpjournalier</field>
+      <field name="inherit_id" ref="caisse_depense_rapport.bon_provisoire_rapport2_form"/>
+      <field name="arch" type="xml">
+      <xpath expr="//form//header" position="inside">
+        <button type="object" name="pdf_xls_data" string="Test rapport BP"/>
+      </xpath>
+    </field>
+    </record>
+  </data>
+</odoo>

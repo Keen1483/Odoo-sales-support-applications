@@ -1,0 +1,12 @@
+<odoo>
+    <data>
+         <template id="custom_favicon" inherit_id="web.layout" name="Custom Favicon" priority="17">
+             <xpath expr="//head//title" position="after">
+                 <title t-esc="title or 'Socsuba'"/>
+             </xpath>
+             <xpath expr="//head//link" position="after">
+                 <link type="image/x-icon" rel="shortcut icon" t-att-href="x_icon or '/web_favicon/static/src/img/favicon.ico'"/>
+             </xpath>
+         </template>
+    </data>
+</odoo>

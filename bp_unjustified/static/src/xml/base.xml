@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="Notification" t-extend="Notification">
+        <t t-jquery=".o_notification_title > t" t-operation="prepend">
+            <span></span>
+        </t>
+        <t t-jquery=".o_notification_content" t-operation="prepend">
+            <span></span>
+        </t>
+    </t>
+</templates>

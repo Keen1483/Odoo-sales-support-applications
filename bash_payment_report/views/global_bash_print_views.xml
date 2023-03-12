@@ -1,0 +1,99 @@
+<odoo>
+    <data>
+        <record id="view_bac_search" model="ir.ui.view">
+          <field name="name">Global bash payment search</field>
+          <field name="model">global.account.bash.payment</field>
+          <field name="arch" type="xml">
+            <search string="Global bash payment">
+              <separator/>
+                <field name="create_uid" />
+                <field name="create_date" />
+              <separator/>
+                <filter string="Enregistrer à l'impression par" name="create_uid" domain="[]" context="{'group_by': 'create_uid'}"/>
+                <filter string="Enregistrer à l'impression le" name="create_date" domain="[]" context="{'group_by': 'create_date'}"/>
+                <filter string="Non archivé" domain="[('imprimee', '=', False)]" name="imprimee"/>
+                <filter string="Archivé" domain="[('non_imprimee', '=', False)]" name="non_imprimee"/>
+            </search>
+          </field>
+        </record>
+
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="global_bash_payment_list">
+          <field name="name">Global bash payment list</field>
+          <field name="model">global.account.bash.payment</field>
+          <field name="arch" type="xml">
+            <tree create="false" default_order="write_date desc">
+              <field name="create_date" string="Enregistrer le" widget="date" attrs="{'invisible':[('bash_no_print', '=', False)]}"/>
+              <field name="fournisseur_print"/>
+              <field name="bash_no_print"/>
+              <field name="reglement_print"/>
+              <field name="no_cheque_print"/>
+              <field name="journal_print"/>
+              <field name="bash_date_print"/>
+              <field name="bash_status_print" string="Statut"/>
+              <field name="bash_nbr_print"/>
+              <field name="bash_amount_print" attrs="{'invisible':[('bash_no_print', '=', False)]}"/>
+              <field name="created_at_print"/>
+              <field name="created_by_print"/>
+              <field name="update_at_print"/>
+              <field name="update_by_print"/>
+              <field name="bash_observation_print" invisible="1"/>
+
+                <!-- Bash 2 -->
+              <field name="fournisseur_bash2" invisible="1"/>
+              <field name="no_bash2" invisible="1"/>
+              <field name="facture_no_print" invisible="1"/>
+              <field name="journal_fact_print" string="Journal" invisible="1"/>
+              <field name="no_piece_print" invisible="1"/>
+              <field name="agence_print" invisible="1"/>
+              <field name="status_fact_print" string="Statut" invisible="1"/>
+              <field name="period_print" invisible="1"/>
+              <field name="article_print" invisible="1"/>
+              <field name="compte_print" invisible="1"/>
+              <field name="tag_print" invisible="1"/>
+              <field name="residual_print" string="Residual" invisible="1"/>
+              <field name="fact_created_at_print" invisible="1"/>
+              <field name="fact_created_by_print" invisible="1"/>
+              <field name="ct_at_print" invisible="1"/>
+              <field name="ct_by_print" invisible="1"/>
+              <field name="maj_at_print" invisible="1"/>
+              <field name="maj_par_print" invisible="1"/>
+
+              <!-- Bash 3 -->
+              <field name="date_fact_print" invisible="1"/>
+              <field name="delai_dfa_brml_print" invisible="1"/>
+              <field name="date_bc_print" invisible="1"/>
+              <field name="delai_bc_brml_print" invisible="1"/>
+              <field name="date_bl_print" invisible="1"/>
+              <field name="delai_bl_brml_print" invisible="1"/>
+              <field name="date_brml_print" invisible="1"/>
+              <field name="delai_brml_brml_print" invisible="1"/>
+              <field name="date_brmc_print" invisible="1"/>
+              <field name="delai_brmc_brml_print" invisible="1"/>
+              <field name="delai_dc_df_print" invisible="1"/>
+              <field name="date_validation_print" invisible="1"/>
+              <field name="delai_dv_dc_print" invisible="1"/>
+              <field name="delaitt_brml_dv_print" invisible="1"/>
+              <field name="cond_paiment_print" invisible="1"/>
+              <field name="date_echeance_print" invisible="1"/>
+              <field name="date_payment_print" invisible="1"/>
+              <field name="echu_verif_print" invisible="1"/>
+            </tree>
+          </field>
+        </record>
+
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="global_bash_payment_act_window">
+          <field name="name">Global bash payment window</field>
+          <field name="res_model">global.account.bash.payment</field>
+          <field name="view_mode">tree</field>
+            <field name="search_view_id" ref="view_bac_search"/>
+            <field name="context">{'search_default_imprimee': 1}</field>
+        </record>
+
+        <!-- actions -->
+        <menuitem name="Rapport global Bash paiement" id="global_bash_payment_menu" parent="account.menu_finance_payables"
+                  action="global_bash_payment_act_window" sequence="21"/>
+
+    </data>
+</odoo>

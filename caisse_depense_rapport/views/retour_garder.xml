@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record id="retour_garder_view_tree" model="ir.ui.view">
+            <field name="name">retour.garder.view.tree</field>
+            <field name="model">retour.garder</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="date_garder" string="Date"/>
+                    <field name="name" string="Name"/>
+                    <field name="encaisseur_id" string="Initiateur"/>
+                    <field name="initiateur_id" string="Emeteur"/>
+                    <field name="beneficiaire_id" string="Acheteur"/>
+                    <field name="state" string="Statut"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- <record id="retour_garder_line_view_tree" model="ir.ui.view">
+            <field name="name">retour.garder.line.view.tree</field>
+            <field name="model">retour.garder.line</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="date_g" />
+                    <field name="name" />
+                    <field name="garder_id" />
+                    <field name="bp_id" />
+                    <field name="amount_bd" />
+                    <field name="amount_garder" />
+                </tree>
+            </field>
+        </record> -->
+        
+        <!-- <record id="retour_garder_line_view_form" model="ir.ui.view">
+            <field name="name">retour.garder.line.view.form</field>
+            <field name="model">retour.garder.line</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Valider" name="paiement_garder" type="object" attrs="{'invisible': [('state', '!=','draft')]} " class="oe_highlight"/>
+                        <button string="Cancel" name="paiement_garder" type="object" attrs="{'invisible': [('state', '!=','valide')]} "/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,garde,valide" modifiers="{}"/>
+                    </header>
+                    <sheet>
+                        <div class="row" modifiers="{}">
+                            <div class="oe_title" col="2" style="margin-left:20px;" modifiers="{}">
+                                <label for="name" modifiers="{}"/>
+                                <h1 modifiers="{}">
+                                    <field name="name" readonly="1" />
+                                </h1>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="bp_id" readonly="1"/>
+                                <field name="amount_bd" readonly="1"/>
+                                <field name="describe" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="date_g" readonly="1"/>
+                                <field name="garder_id" readonly="1"/>
+                                <field name="amount_garder" readonly="1"/>
+                                <field name="rapport_id" invisible="1" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                          
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record> -->
+
+        <record id="retour_garder_view_form" model="ir.ui.view">
+            <field name="name">retour.garder.view.form</field>
+            <field name="model">retour.garder</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Valider" name="paiement_garder" type="object" attrs="{'invisible': [('state', '!=','draft')]} " class="oe_highlight"/>
+                        <button string="Cancel" name="cancel_Garder" type="object" attrs="{'invisible': [('state', '!=','valide')]} "/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,valide" modifiers="{}"/>
+                    </header>
+                    <sheet>
+                        <div class="row" modifiers="{}">
+                            <div class="oe_title" col="2" style="margin-left:20px;" modifiers="{}">
+                                <label for="describe" modifiers="{}"/>
+                                <h1 modifiers="{}">
+                                    <field name="describe" placeholder="Description" attrs="{'readonly': [('state', '!=', 'draft')]}" modifiers="{'readonly':[['state','!=','draft']]}"/>
+                                </h1>
+                            </div>
+                            <div class="col-4" style="margin-left:250px;" attrs="{'invisible': [('state', '=', 'draft')]}" modifiers="{'invisible':[['state','=','draft']]}">
+                                <h1 modifiers="{}">
+                                    <field name="name" attrs="{'readonly':True}" modifiers="{'readonly':true}"/>
+                                </h1>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="encaisseur_id" string="Initiateur" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="initiateur_id" string="Emeteur" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </group>
+                            <group>
+                                <field name="date_garder" string="Date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <!-- <field name="journal_id" widget="selection" string="Journal de paiement" attrs="{'readonly': [('state', '!=', 'draft')]}"/>   -->
+                                <field name="beneficiaire_id" string="Acheteur" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                
+                            </group>
+                        </group>
+                        <notebook modifiers="{}">
+                            <page  string="Lignes de BP">
+								<field name="garde_ids" 
+								widget="section_and_note_one2many" 
+								mode="tree"
+								attrs="{'readonly':[('state','not in',['draft'])]}">
+									<tree editable="bottom" > 
+										<field name="bp_id" string="BP"  options="{'no_create':True}" required="1"/>
+										<field name="bp_description" string="Description" required="1"/>
+										<field name="amount_bd" string="Montant BP" required="1" force_save="1"/>
+										<field name="nature" string="Nature" required="1" force_save="1"/>
+										<field name="describe" string="Description" required="1"  force_save="1"/> 
+										<!-- <field name="amount_garder"  string="Montant Gardé" invisisble="1" attrs="{'invisible':[('garder','!=',True)],'required':[('garder','=',True)]}" force_save="1" sum="Total Gargé"/> -->
+										<field name="reste_garde" string="Solde" readonly="1" required="1" force_save="1"/> 
+										<field name="montant" string="Montant" required="1" force_save="1" sum="Total"/>
+                                        <field name="garder" invisible="1" force_save="1" />
+                                        <field name="retirer" invisible="1" force_save="1"/>
+                                        <field name="amount_garder" invisible="1" force_save="1"/>
+                                        <field name="amount_retirer" invisible="1" force_save="1"/>
+                                        <field name="caisse_bp" readonly="1" force_save="1"/>  
+                                        
+									</tree>
+								
+								</field> 
+							</page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- gestion des retrait d argent de bp gardé -->
+
+        <record id="retrait_garder_view_form" model="ir.ui.view">
+            <field name="name">retrait.garder.view.form</field>
+            <field name="model">retrait.garder</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button string="Valider" name="paiement_garder" type="object" attrs="{'invisible': [('state', '!=','draft')]} " class="oe_highlight"/>
+                        <button string="Cancel" name="paiement_garder" type="object" attrs="{'invisible': [('state', '!=','valide')]} "/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,valide" modifiers="{}"/>
+                    </header>
+                    <sheet>
+                        <div class="row" modifiers="{}">
+                            
+                            <div class="col-4" style="margin-left:250px;" attrs="{'invisible': [('state', '=', 'draft')]}" modifiers="{'invisible':[['state','=','draft']]}">
+                                <h1 modifiers="{}">
+                                    <field name="name" attrs="{'readonly':True}" modifiers="{'readonly':true}"/>
+                                </h1>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="beneficiaire_id" string="Acheteur" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="initiateur_id" string="Emeteur" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </group>
+                            <group>
+                                <field name="date_garder" string="Date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                
+                                <field name="describe"  attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                
+                            </group>
+                        </group>
+                        <notebook>
+                            <page  string="Retrait">
+                                <field name="retrait_ids" 
+								widget="section_and_note_one2many" 
+								mode="tree"
+								attrs="{'readonly':[('state','not in',['draft'])]}">
+                                    <tree editable="bottom" > 
+                                        <field name="bp_id" string="Bon provisoire" required="1"/>
+                                        <field name="bp_description" string="Description BP" readonly="1"/>
+                                        <field name="amount_bd" string="Montant BP" readonly="1"/>
+                                        <field name="retour_id" string="No Gardé" readonly="1"/>
+                                        <field name="describe_garder" string="Description Gardé" readonly="1"/>
+                                        <field name="amount_garder" string="Montant Gardé" readonly="1"/>
+                                        <field name="montant_retrait" string="Montant Retiré" required="1"/>
+                                        <!-- <field name="" string="" required="1"/>
+                                        <field name="" string="" required="1"/> --> 
+                                    </tree> 
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="retrait_garder_view_tree" model="ir.ui.view">
+            <field name="name">retrait.garder.view.tree</field>
+            <field name="model">retrait.garder</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="date_garder" />
+                    <field name="beneficiaire_id" />
+                    <field name="initiateur_id" />
+                    <field name="describe" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="retour_garder_action" model="ir.actions.act_window">
+            <field name="name"> Gardés</field>
+            <field name="res_model">retour.garder</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="target">current</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        <record id="retour_garder_line_action" model="ir.actions.act_window">
+            <field name="name">Retrait des Montants gardés</field>
+            <field name="res_model">retour.garder.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record id="retrait_garder_action" model="ir.actions.act_window">
+            <field name="name">Retrait des Montants gardés</field>
+            <field name="res_model">retrait.garder</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <menuitem
+            id="retour_menu_menu"
+            name="Reste BP Gardé"
+            parent="hr_expense.menu_hr_expense_root"
+            sequence="57"/>
+
+        <menuitem
+            id="retour_garder_menu"
+            name="Garder"
+            action="retour_garder_action"
+            parent="retour_menu_menu"
+            sequence="1"/>
+
+        <!-- <menuitem
+            id="retour_garder_line_menu"
+            name="Retrait des Montants gardés"
+            action="retrait_garder_action"
+            parent="retour_menu_menu"
+            sequence="2"/> -->
+    </data>
+    
+    
+</odoo>

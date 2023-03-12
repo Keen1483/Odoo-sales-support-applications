@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <template id="template_bash_payment_btn_print_caisse11">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <style>
+                        table {
+                            font-size: 0.8em;
+                           /* margin-top: 1em;*/
+                            width: 100%;
+                            font-family: Verdana, sans-serif;
+                           /* border-collapse: collapse;*/
+                        }
+
+                        /*th {
+                            padding-left: 0.75em;
+                            
+                        }*/
+                        tr td {
+                            padding: 0 0.5em;
+                        }
+
+                        .number {
+                            text-align: right;
+                        }
+                        .cell {
+                            border: 1px solid gray;
+                        }
+                        .container {
+                            position: relative;
+                        }
+                        .titre {
+                            text-decoration: underline;
+                            padding-bottom: 0.8 em;
+                        }
+                        .amount {
+                            text-align: right;
+                        }
+                        .total {
+                            width: 100%;
+                            text-align: right;
+                            font-weight: 900;
+                            padding-top: 0.4 em;
+                            position: relative;
+                            right: 1px;
+                            margin-top: 0.4rem;
+                        }
+                        
+                        .sign {
+                            position: relative;
+                            top: 10px;
+                            width=100%;
+                           
+                            
+                        }
+                        .sign-td {
+                            font-weight: 700;
+                        }
+                       /* .sign-td::after {
+                            display: block;
+                            width: 80px;
+                            border-bottom: 1px dotted gray;
+                            content: "";
+                        }*/
+                    </style>
+                   
+
+                    <!-- BASH 2 -->
+                    <div class="page second-bash" style="page-break-before: always;">
+                        <div class="container">
+                            <table class ='titre' width="100%">
+                                <tr>
+                                    <td width="33%">
+                                    </td>
+                                    <td align="center">
+                                        <b><span>Fiche De Suivi Des Bons Provisoires</span></b>
+                                    </td>
+                                    <td width="33%" align="right">
+                                        <b><span t-esc="time.strftime('%d/%m/%Y')"/></b>
+                                    </td>
+                                </tr>
+                            </table>
+                            <t t-set="val" t-value="0"/>
+                            <t t-set="sub_total" t-value="0"/>
+                            <t t-set="sub_reste" t-value="0"/>
+                            <t t-set="facture_count" t-value="0"/>
+                            <t t-set="reste_count" t-value="0"/>
+                            <t t-set="gader_count" t-value="0"/>
+                            <t t-set="No" t-value="1"/>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="cell">No</th>
+                                        <th class="cell">Bash no</th>
+                                        <th class="cell">Date</th>
+                                        <th class="cell">Description</th>
+                                        <th class="cell">Status</th>
+                                        <th class="cell">
+                                            <!-- <tr style="text-align: center;">
+                                                <th>Facture</th>
+                                            </tr> -->
+                                                <table width="100%" height="50%" style="border:1px solid #000">
+                                                    <thead>
+                                                        <tr width="100%" height="50%">
+                                                            <th  style="text-align: center;">Facture</th> 
+                                                        </tr>
+                                                    </thead>
+                                               </table>
+                                                <table width="100%" height="50%" style="border:1px solid #000"> 
+                                                    <thead>
+                                                        <tr width="100%" height="50%">
+                                                            <th style="text-align: left;" width="33%">No</th>
+                                                            <th style="text-align: center;" width="33%">Date</th>
+                                                            <th  style="text-align: right;" width="33%">Montant</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            
+                                        </th>
+                                        <th class="cell">A Retourner</th>
+                                        <th class="cell">Gardé</th>
+                                        <th class="cell">Delais</th>
+                                        <th class="cell" style="text-align: right;">Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="docs" t-as="o">
+                                        <t t-set="value" t-value="o"/>
+                                        <tr>
+                                            <!-- No -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-esc="No"/></td>
+                                                                
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Bash no -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                        
+                                                            <tr>
+                                                                <td><span t-field="value.name"/></td>
+                                                            </tr>
+                                                       
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Date -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-esc="value.create_date.date().strftime('%d/%m/%Y')"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Description -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.describe"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Status -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.statut"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Facture -->
+                                            <td class="cell">
+                                                <table>
+                                                    <thead>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <t t-if="value.facture_ids">
+                                                            <t t-foreach="value.facture_ids" t-as="line">
+                                                                <tr>
+                                                                    <t t-set="facture_count" t-value="facture_count + line.montant "/>
+                                                                        <tr>
+                                                                            <td style="text-align: left;">                                            
+                                                                                 <span t-esc="line.numero"/>                                            
+                                                                            </td>
+                                                                            <td style="text-align: center;">                                            
+                                                                                 <span t-esc="line.date_fac"/>                                            
+                                                                            </td>
+                                                                            <td style="text-align: right;">                                            
+                                                                                 <span t-esc="line.montant" t-options="{'widget': 'float', 'precision':0}"/>                                            
+                                                                            </td>
+                                                                        </tr>
+                                                                </tr>
+                                                            </t>
+                                                        </t>
+                                                                
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- A Retourner -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                
+                                                                 
+                                                                <t t-if="value.reste_ids">
+                                                                    <t t-foreach="value.reste_ids" t-as="line">
+                                                                        <t t-set="reste_count" t-value="reste_count + line.montant "/>
+                                                                        <tr>
+                                                                            <td align="center">                                            
+                                                                                <span t-esc="line.montant"  t-options="{'widget': 'float', 'precision':0}"/>                                            
+                                                                            </td>
+                                                                        </tr>
+                                                                    </t>
+                                                                </t>
+
+
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Gardé -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td align="center"><span t-esc="value.garder" t-options="{'widget': 'float', 'precision':0}"/></td>
+                                                                <t t-set="gader_count" t-value="gader_count + value.garder"/>
+
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Delais -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td align="center" ><span t-field="value.delais"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Montant -->
+                                            <td class="cell">
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td class="amount"><span t-esc="value.amount" t-options="{'widget': 'float', 'precision':0}"/> </td>
+                                                                <t t-set="val" t-value="val + value.amount"/>
+                                                                <t t-set="No" t-value="No + 1"/>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>           
+                                            
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td><span><b>Total :</b></span></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td style="text-align: center;">
+                                            <span><t t-esc="facture_count" t-options="{'widget': 'float', 'precision':0}"/></span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <span> <t t-esc="reste_count" t-options="{'widget': 'float', 'precision':0}"/></span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <span> <t t-esc="gader_count" t-options="{'widget': 'float', 'precision':0}"/></span>
+                                        </td>
+                                        <td ></td>
+                                        <td style="text-align: right;">
+                                            <span><t t-esc="val" t-options="{'widget': 'float', 'precision':0}"/></span>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="total" >  
+                                <t t-set="sub_total" t-value="facture_count + reste_count + gader_count "/>
+                                <span style="border-bottom: 1px solid #000;">sous Total : <t t-esc="sub_total" t-options="{'widget': 'float', 'precision':0}"/></span>
+                            </div>
+                            <div class="total">  
+                                <t t-set="sub_reste" t-value="val - sub_total"/>
+                                <span> Reste : <t t-esc="sub_reste" t-options="{'widget': 'float', 'precision':0}"/></span>
+                            </div>
+                            
+                            <div class="sign w-100">
+                                <table width="100%">
+                                    <tr>
+                                        <td class="sign-td" width="33%">
+                                            DETENTEUR<br/>__________<br/>__________<br/>__________
+                                        </td>
+                                        <td class="sign-td" align="center">
+                                            VERIFICATEUR<br/>__________<br/>__________<br/>__________
+                                        </td>
+                                        <td class="sign-td" width="33%" align="right">
+                                            SUPERVISEUR<br/>__________<br/>__________<br/>__________
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <template id="template_bash_payment_btn_print_caisse_rapport">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <style>
+                        table {
+                            font-size: 0.8em;
+                            margin-top: 1em;
+                            width: 100%;
+                            font-family: Verdana, sans-serif;
+                        }
+
+                        th:not(:first-child) {
+                            padding-left: 0.75em;
+                        }
+
+                        tr td:not(:first-child) {
+                            padding: 0 0.5em;
+                        }
+
+                        .number {
+                            text-align: right;
+                        }
+                        .line {
+                            border-bottom: 1px solid gray;
+                        }
+                        .container {
+                            position: relative;
+                        }
+                        .titre {
+                            text-decoration: underline;
+                            padding-bottom: 0.8 em;
+                        }
+                        .amount {
+                            text-align: right;
+
+                           
+                        }
+                        .total {
+                            width: 100%;
+                            text-align: right;
+                            font-weight: 900;
+                            padding-top: 0.4 em;
+                            position: relative;
+                            right: 1px;
+                            margin-top: 0.4rem;
+                        }
+                        .sign {
+                            position: relative;
+                            top: 10px;
+                            width=100%;
+                           
+                            
+                        }
+                        .sign-td {
+                            font-weight: 700;
+                        }
+                       /* .sign-td::after {
+                            display: block;
+                            width: 80px;
+                            border-bottom: 1px dotted gray;
+                            content: "";
+                        }*/
+                    </style>
+                    
+                    <!-- BASH 2 -->
+                    <div class="page second-bash" style="page-break-before: always;">
+                        <div class="container">
+                            <table class ='titre' width="100%">
+                                <tr>
+                                    <td width="33%">
+                                    </td>
+                                    <td align="center">
+                                        <b><span>Liste des intentions d'achats</span></b>
+                                    </td>
+                                    <td width="33%" align="right">
+                                        <b><span t-esc="time.strftime('%d/%m/%Y')"/></b>
+                                    </td>
+                                </tr>
+                            </table>
+                            <t t-set="val" t-value="0"/>
+                            <table class="table1">
+                                <thead>
+                                    <tr class="line">
+                                        <th>Crée le</th>
+                                        <th>Bash no</th>
+                                        <th>Description</th>
+                                        <th>Initiateur</th>
+                                        <th>Beneficiaire</th>
+                                        <th>Encaisseur</th>
+                                        <th>Reference</th>
+                                        <th>statut</th>
+                                        <th>Motif de l'autorisation</th>
+                                        <th>Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="docs" t-as="o">
+                                        <t t-set="value" t-value="o"/>
+                                        <!-- <t t-set="val" t-value="value + value.amount"/> -->
+                                        <tr class="line">
+                                            
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-esc="value.create_date.date()"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        
+                                                            <tr>
+                                                                <td><span t-field="value.name"/></td>
+                                                            </tr>
+                                                       
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td ><span t-field="value.describe"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.initiateur_id"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.beneficiaire"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.encaisseur_id"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.nom_op"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.state"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.justif_value"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td> -->
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td><span t-field="value.justification"/></td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                            <tr>
+                                                                <td class="amount"><span t-esc="value.amount" t-options="{'widget': 'float', 'precision':0}"/> </td>
+                                                                <t t-set="val" t-value="val + value.amount"/>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                           
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            
+                            <div class="total">     
+                                <span>Total : <t t-esc="val" t-options="{'widget': 'float', 'precision':0}"/></span>
+
+                            </div>
+                            <div class="sign w-100">
+                                <table width="100%">
+                                    <tr>
+                                        <td class="sign-td" width="33%">
+                                            Acheteur<br/>__________<br/>__________<br/>__________
+                                        </td>
+                                        <td class="sign-td" align="center">
+                                            Controle<br/>__________<br/>__________<br/>__________
+                                        </td>
+                                        <td class="sign-td" width="33%" align="right">
+                                            Approbateur<br/>__________<br/>__________<br/>__________
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </t>
+            </t>
+        </template>
+
+        <template id="report_bp_acheteur">
+            <t t-set="nom1" t-value="user.name.split(' ')[0]"/>
+            <t t-set="nom2" t-value="user.name.split(' ')[-1]"/>
+            <t t-set="val" t-value="''"/>
+            <t t-call="web.html_container">
+
+                <!-- afficher entete ici -->
+                <div class="left" style="font-size:0.9em">
+                    <span><b>Date:</b></span><span t-esc="time.strftime('%d/%m/%Y')"></span>
+                    <br/>
+                        <span><b>Encaisseur:</b></span><span t-esc="val"/>
+                    <br/>
+                    <span><b>Heure:</b></span><span t-esc="time.strftime('%H:%M:%S')"/>
+                    <br/>
+                </div>
+
+                <t t-foreach="docs" t-as="o">
+                    <t t-foreach="o.encaisseur_id" t-as="ben">
+                        <t t-set="val" t-value="ben.name"/>
+                          
+                    </t>
+    
+                    <!-- </t> -->
+                    <div style="margin-left: 2px; margin-right: 10px; margin-top: 25px; font-family: 'Segoe UI', Tahoma, sans-serif;">
+    
+                        <div class="page">
+    
+                            
+                                <div class="de">
+                                    <span class="s"><b>Status: </b></span>
+                                    <!-- <t t-esc="o.state"/> -->
+                                   
+                                    <t t-if="o.justif_value == true">Autorisé</t>
+                                    <t t-else="o.justif_value == true">Validé</t>
+                                </div>
+                            
+                            <t t-if="o.justification">
+                                <span style="font-size: 1.1em; margin: none; font-weight: lighter; font-variant: petite-caps;" t-esc="o.justification"></span>
+                                <br/>
+                            </t>
+                            <hr style="color: white; width: 30%;"/>
+    
+    
+                            <div style="height: 18px"></div>
+    
+                            <table width="100%">
+                                <thead>
+                                    <tr>
+                                        <th width="33%"><span>Date</span></th>
+                                        <th align="center">
+                                            <span t-esc="o.type_depense.upper()"></span>
+                                        </th>
+                                        <th width="33%" align="right"><span>Reference</span></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div style="border-top: 2px solid black; border-bottom: 2px solid black; width:100%; display: flex; justify-content: flex-end;">
+                            <table width="100%">
+                                <tr>
+                                    <td width="33%">
+                                        <span t-esc="o.payment_date"></span>
+                                    </td>
+                                    <td align="center">
+                                        <span t-esc="o.name"></span>
+                                    </td>
+                                    <td width="33%" align="right">
+                                        <span t-esc="o.nom_op"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div align="center" style="font-family: 'Segoe UI', Tahoma, sans-serif; width: 100%;">
+                            <table width="100%">
+                                <thead>
+                                    <tr>
+                                        <th><span>Initiateur:</span></th>
+                                        <th><span>Beneficiaire:</span></th>
+                                        <th><span>Encaisseur:</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <t t-foreach="o.initiateur_id" t-as="ben">
+                                            <td><span t-esc="ben.name"></span></td>
+                                        </t>
+                                        <t t-if="o.beneficiaire">
+                                                <td><span t-esc="beneficiaire"></span></td>
+                                            
+                                        </t>
+                                        <t t-foreach="o.encaisseur_id" t-as="ben">
+                                            <td><span t-esc="ben.name"></span></td>
+                                        </t>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><span t-esc="o.describe"></span></p>
+    
+                           
+                            <hr style="color:#eee" />
+                            
+                        </div> 
+                    </div>
+                </t>
+
+                <table width="100%">
+                    <tr>
+                        <td width="33%">
+                            <b><span>Initiateur</span></b>
+                        </td>
+                        <td align="center">
+                            <b><span>Visa</span></b>
+                        </td>
+                        <td width="33%" align="right">
+                            <b><span>Approbateur</span></b>
+                        </td>
+                    </tr>
+                </table>
+            </t>
+        </template>
+
+
+        <template id="retour_bp_acheteur">
+            
+            <t t-set="val" t-value="''"/>
+            <t t-call="web.html_container">
+                <t t-if="not o" t-set="o" t-value="doc"/>
+                <table class ='titre' width="100%">
+                    <tr>
+                        <td width="33%">
+                        </td>
+                        <td align="center">
+                           
+                        </td>
+                        <td width="33%" align="right">
+                            <b><span t-esc="time.strftime('%d/%m/%Y')"/></b>
+                        </td>
+                    </tr>
+                </table>
+                <t t-if="not company">
+                    <!-- Multicompany -->
+                    <t t-if="company_id">
+                        <t t-set="company" t-value="company_id"/>
+                    </t>
+                    <t t-elif="o and 'company_id' in o">
+                        <t t-set="company" t-value="o.company_id.sudo()"/>
+                    </t>
+                    <t t-else="else">
+                        <t t-set="company" t-value="res_company"/>
+                    </t>
+                </t>
+                
+                <div class="header">
+                    <div class="o_background_header">
+                    <div class="float-right">
+                        <!-- <b><span t-esc="time.strftime('%d/%m/%Y')"></span></b> -->
+                        <h3 class="mt0 text-right" t-field="company.report_header"/>
+                    </div>
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" class="float-left" alt="Logo"/>
+                    <div class="float-left company_address">
+                        <div>
+                            <strong t-field="company.partner_id.name"/>
+                        </div>
+                        <span t-field="company.partner_id"
+                            t-options='{"widget": "contact", "fields": ["address"]}'/>
+                    </div>
+                    <div class="clearfix mb8"/>
+                    </div>
+                </div>
+                <div style="margin-left: 2px; margin-right: 10px; margin-top: 25px; font-family: 'Segoe UI', Tahoma, sans-serif;position:absolute;padding-top:1em;">   
+                    <t t-foreach="docs" t-as="o">
+                        <t t-foreach="o.encaisseur_id" t-as="ben">
+                            <t t-set="val" t-value="ben.name"/>
+                            
+                        </t>
+        
+                        <!-- </t> -->
+                    
+        
+                            <div class="page">
+        
+                                
+                                <hr style="color: white; width: 30%;"/>
+        
+        
+                                <div style="height: 18px"></div>
+        
+                                <table width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th width="33%"><span>Date</span></th>
+                                            <th align="center">
+                                                <span>No RBP</span>
+                                            </th>
+                                            <th width="33%" align="right"><span>Montant</span></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div style="border-top: 2px solid black; border-bottom: 2px solid black; width:100%; display: flex; justify-content: flex-end;">
+                                <table width="100%">
+                                    <t t-set="v" t-value="0"/>
+                                    <t t-foreach="o.reste_ids" t-as="b">
+                                        <tr>
+                                            <td width="33%">
+                                                <span t-esc="b.date_rbp"></span>
+                                            </td>
+                                            <td align="center">
+                                                <span t-esc="b.numero"></span>
+                                            </td>
+                                            <td width="33%" align="right">
+                                                <span t-esc="b.montant" t-options="{'widget': 'float', 'precision':0}"></span>
+                                                <t t-set="v" t-value="v + b.montant"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                        <tr>
+                                            <td width="33%"> </td>
+                                            <td align="center"><span>Total :</span></td>
+                                            <td width="33%" align="right">
+                                                <span t-esc="v" t-options="{'widget': 'float', 'precision':0}"></span>
+                                            </td>
+                                        </tr>
+                                    
+                                </table>
+                            </div>
+                            <div align="center" style="font-family: 'Segoe UI', Tahoma, sans-serif; width: 100%;">
+                                <table width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th><span>Initiateur:</span></th>
+                                            <th><span>Beneficiaire:</span></th>
+                                            <th><span>Encaisseur:</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <t t-foreach="o.initiateur_id" t-as="ben">
+                                                <td><span t-esc="ben.name"></span></td>
+                                            </t>
+                                                <td><span t-esc="o.beneficiaire"></span></td>
+                                            
+                                            <t t-foreach="o.encaisseur_id" t-as="ben">
+                                                <td><span t-esc="ben.name"></span></td>
+                                            </t>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p><span t-esc="o.describe"></span></p>
+        
+                            
+                                <hr style="color:#eee" />
+                                
+                            </div> 
+                        
+                    </t>
+                    <table width="100%">
+                        <tr>
+                            <td width="33%">
+                                <b><span>Partie Versante</span></b>
+                            </td>
+                            <td align="center">
+                                <b><span>Visa</span></b>
+                            </td>
+                            <td width="33%" align="right">
+                                <b><span>Beneficiaire</span></b>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+            </t>
+        </template>
+    </data>
+</odoo>

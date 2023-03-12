@@ -1,0 +1,402 @@
+<odoo>
+  <data>
+   
+    <!-- tree view to list all -->
+    <record model="ir.ui.view" id="bon_provisoire_rapport2_tree">
+      <field name="name">Bon provisoire Tree</field>
+      <field name="model">caisse_depense_rapport.bpjournalier</field>
+      <field name="arch" type="xml">
+        <tree default_order="create_date desc" decoration-info="state == 'draft'" create="false" >
+					<field name="create_date" string="Créer le"/>
+					<field name="payment_date"/>
+					<field name="name"/>
+					<field name="journal_id"  invisible="1"/>
+					<field name="initiateur_id"/>
+					<field name="beneficiaire_id" string="Beneficiaire" invisible='1'/>
+					<field name="beneficiaire"/>
+					<field name="encaisseur_id"/>
+					<field name="company_id"  invisible="1"/>
+					<field name="state" />
+					<field name="nom_op"/>
+					<field name="justif_id"/>
+					<field name="register_seq"/>
+					<field name="state_justif"/>
+					<field name="delais" /> 
+					<!-- <field name="end_date" />  -->
+					<field name="describe" />
+					<field name="partner_type" invisible="1"/>
+					<field name="garder" />
+					<field name="amount" sum="Amount"/>
+          			<field name="statut"/>
+				</tree>
+      </field>
+    </record>
+	<record id="caisse_bpjournalier_line_tree" model="ir.ui.view">
+		<field name="name">caisse.bpjournalier.line.tree</field>
+		<field name="model">caisse.bpjournalier.line</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="name" invisible="1"/>
+				<field name="numero" />
+				<field name="bonpro_id" />
+				<field name="montant" />
+				<field name="description" />
+				<field name="partner_id" />
+				<field name="fournisseur_inconnu" invisible="1"/>
+				<field name="fournisseur_divers" attrs="{'invisible':[('partner_id', '!=', 'Fournisseurs divers')],'required':[('fournisseur_inconnu','=',True)]}" string="Fournisseur Divers"  force_save="1"/>
+			</tree>
+		</field>
+	</record>
+    <!-- for to create -->
+
+	<record id="caisse_bpjournalier_line_form" model="ir.ui.view">
+		<field name="name">caisse.bpjournalier.line.form</field>
+		<field name="model">caisse.bpjournalier.line</field>
+		<field name="arch" type="xml">
+			<form string="">
+				<header>
+				</header>
+				<sheet>
+					<group>
+						<group>
+							<field name="name" invisible="1" string="Name"/>
+							<field name="bonpro_id" string="Bon provisoire"/>
+							<field name="montant" string="Montant" />
+							<field name="partner_id" /> 
+
+						</group>
+						<group>
+							<field name="description" string="Description" />
+							<field name="numero" string="Numero" />
+							<field name="fournisseur_inconnu" invisible="1"/>
+							<field name="fournisseur_divers" attrs="{'invisible':[('partner_id', '!=', 'Fournisseurs divers')],'required':[('fournisseur_inconnu','=',True)]}" string="Fournisseur Divers"  force_save="1"/>
+						</group>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+    <record model="ir.ui.view" id="bon_provisoire_rapport2_form">
+      <field name="name">Bon provisoire</field>
+      <field name="model">caisse_depense_rapport.bpjournalier</field>
+      <field name="arch" type="xml">
+        <form string="Register Payment" create="false"> 
+					
+					<header>
+                      <field name="state" widget="statusbar" statusbar_visible="draft,valide,direction,caisse,controle,verification,justifier,comptabilité" invisible="1"/>
+                      <button name="check_statut" type="object" string=" Valider "   attrs="{'invisible': [('statut', '=', 'justify')]} " class="oe_highlight o_expense_submit"/>
+                      <button name="cancel" type="object" string=" Cancel "  groups="caisse_depense_rapport.group_bp_rejeter"  attrs="{'invisible': [('statut', '!=', 'justify')]} " />
+                      <field name="statut" widget="statusbar" statusbar_visible="draft,bigining,justify"/>
+					</header>
+					<sheet>
+						<!-- <field name="id" invisible="1"/> -->
+						
+						<div class="oe_button_box" name="button_box" groups="first_module_new.group_superAd">
+							
+						</div>
+						
+						<div class="row" >
+							<div class=" col-12 oe_title" >
+								<h2 width="688px">
+									<field name="bp_id" string="Bon provisoire" placeholder="Bon provisoire"/>
+								</h2>
+
+							</div>
+							 <div class=" col-12 oe_title" >
+								
+								<label for="describe" />
+								<h2 width="688px">
+									<field name="describe" placeholder="Description" readonly="1" force_save="1" />
+								</h2>
+
+							</div>
+						</div>
+						<div class="row" >
+							 <div class="col-6" >
+
+
+							</div>
+							 <div class="col-6" attrs="{'invisible': [('state', '=', 'draft')]}">
+								<h1>
+									<field name="name" attrs="{'readonly':True}"/>
+								</h1>
+							</div>
+						 </div>
+						
+						<group>
+							<group>
+								<field name="nom_projet" invisible="1"/>
+								<!-- <field name="nom_projet_ids" widget="many2many_tags" options="{'no_create':True}" attrs="{'readonly': [('state', '!=', 'draft')]}"/> -->
+                                <field name="other_describe" />
+								
+								<field name="encaisseur_id" options="{'no_create':True}" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+								<field name="initiateur_id" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'no_create':True}" />
+								<field name="beneficiaire_id" invisible="1" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+								<field name="beneficiaire" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+								<field name="Date_jour" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+								<div name="amount_div" class="o_row">
+									<field name="currency_id" options="{'no_create': True, 'no_open': True}" invisible="1" groups="base.group_multi_currency" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+								</div>
+								<field name="journal_id" widget="selection" attrs="{'required':True,'readonly': [('state', '!=', 'draft')]}"/>
+								<field name="move" readonly="1"/>
+								<field name="justif_id" attrs="{'invisible':[('state','not in',['verification','comptabilité'])]}"/>
+								<field name="reste_a_payer" string="Reste" />
+								
+							</group>
+							<!-- domain="[('supplier','=',True)]" -->
+							<group>
+								<field name="payment_date" required="1" attrs="{'required':False,'readonly': [('state', '!=', 'draft')]}"/>
+								<field name="type" invisible="1" attrs="{'required':True,'readonly': [('state', '!=', 'draft')]}"/>
+								<field name="type_depense"  attrs="{'readonly': [('state', '!=', 'draft')],'required':[('type','=','depense')]}"/>
+								<field name="partner_id" options="{'no_create':True}" domain="[('supplier','=',True)]" attrs="{'required': [('state', '=', 'draft')], 'readonly': [('state', '!=', 'draft')]}" string='Partenaire' />
+								<field name="nom_op" attrs='{"required":[("type","=","depense")],"readonly": [("state", "!=", "draft")]}'/>
+								<field name="amount" string="Total" readonly="1" attrs="{'required':False,'readonly': [('type', '=', 'depense')]}"/>
+								<field name='en_justif' readonly="1" groups='first_module_new.group_superAd'/>
+								<field name="register_seq" attrs="{'invisible':[('type_depense','!=','bp')]}" readonly="1"/>
+								<field name="garder" readonly="1"/>
+							</group>
+						</group>
+						
+						<notebook>
+							<page  string="Facture">
+								<field name="facture_ids" 
+								widget="section_and_note_one2many" 
+								mode="tree"
+								attrs="{'readonly': [('statut','in',['justify'])]}">
+								
+								<tree editable="bottom">
+									<field name="numero" string="No Facture"  force_save="1"/>
+									<field name="date_fac" string="Date Facture" required="1" force_save="1"/>
+									<field name="partner_id" string="Fournisseur"  force_save="1"/>
+									<!-- <field name="fournisseur_divers" attrs="{'invisible':[('fournisseur_inconnu','!=',True)]}" string="Fournisseur Divers"  force_save="1"/>  -->
+									<!-- <field name="fournisseur_divers" attrs="{'invisible':[('fournisseur_inconnu','!=',True)],'required':[('fournisseur_inconnu','=',True)]}" string="Fournisseur Divers"  force_save="1"/> -->
+									<field name="fournisseur_inconnu"  string="Fournisseur Inconnu"  invisible="1" force_save="1"/>
+									<field name="description"  string="Description sur la facture" force_save="1" />
+									<field name="montant" string="Montant" required="1" force_save="1" sum="Total Facture"/>
+								</tree>
+								</field> 
+							</page>
+
+							<page string="Projets Approuvés">
+								<button icon="fa-download" type="object" widget="selection" name="select_all" string="ALL"  />
+								<field name="project_ouvert_ids" create="false">
+									<form>
+										<group>
+											<group>
+												<field name="project_id" domain="[('state','=','approved')]"/>
+												<field name="motif"/>
+												<field name="reference"/>
+												<field name="amount"/>
+											</group>
+											<group>
+												<field name="initiateur"/>
+												<field name="date"/>
+												<field name="type_depense"/>
+												<field name="selection"/>
+											</group>
+										</group>
+									</form>
+									<tree string="Projets Approuvés" editable="bottom" create="false">
+										<field name="selection"/>
+										<field name="project_id" domain="[('state','=','approved')]" readonly="1"/>
+										<field name="reference" readonly="1"/>
+										<field name="motif" readonly="1"/>
+										<field name="type_depense" readonly="1"/>
+										<field name="initiateur" readonly="1"/>
+										<field name="date" readonly="1"/>
+										<field name="amount" readonly="1" sum="total"/>
+									</tree>
+								</field>
+							</page>
+							<page string="Projets" >
+								<field name="payment_lines" create="false" attrs="{'readonly':[('state','in',['controle','verification','ouvert'])]}">
+									<form string="Projets" create="false">
+										<group>
+											<group >
+												<group >
+													<field name="project_id" domain="[('state','=','approved')]"/>
+													<field name="reference_piece" />
+													<field name="motif" />
+													<field name="amount_invoice"/>
+												</group >
+												<group >
+													<field name="beneficiaire_id" readonly="1"/>
+													<!-- <field name="employee_id"/> -->
+													<field name="encaisseur_id" readonly="1"/>
+													<field name="amount" readonly="1"/>
+												</group >
+											</group>
+										</group>
+									</form>
+									<tree string="Projets" editable="bottom" create="false">
+										<field name="project_id" domain="[('state','=','approved')]"/>
+										<field name="reference_piece" readonly="1"/>
+										<field name="motif" readonly="1"/>
+										<field name="beneficiaire_id" readonly="1"/>
+										<!-- <field name="employee_id"/> -->
+										<field name="encaisseur_id" readonly="1"/>
+										<field name="amount" readonly="1" sum ="total"/>
+
+
+									</tree>
+								</field>
+							</page>
+						</notebook>
+						<notebook>
+							<page  string="Retour BP" readonly="1">
+								<field name="reste_ids" 
+								widget="section_and_note_one2many" 
+								mode="tree"
+								attrs="{'readonly': [('statut','in',['justify'])]}" 
+								readonly="1">
+								
+									<tree editable="bottom" readonly="1">
+										<field name="bonpro_id" string="BP Associé" invisible="1" force_save="1"/>
+										<field name="numero" string="No RBP" />
+										<field name="beneficiaire_id" string="Acheteur"  force_save="1"/>
+										<field name="date_rbp" string="Date Emission RBP"  force_save="1"/>
+										<field name="montant" string="Montant du RBP" required="1" force_save="1" sum="Total RBP"/>
+										
+									</tree>
+								
+								</field> 
+							</page>
+
+							<page  string="Reste Gardé" readonly="1">
+								<field name="garder_ids" 
+								widget="section_and_note_one2many" 
+								mode="tree"
+								attrs="{'readonly': [('statut','in',['justify'])]}" 
+								readonly="1">
+								
+									<tree editable="bottom" readonly="1">
+										<field name="date_g" string="Date"  force_save="1"/>
+										<field name="rapport_id" string="BP Associé" invisible="1" force_save="1"/>
+										<field name="name_garder" string="Name" force_save="1"/> 
+										<field name="name" string="Name retrait" force_save="1"/> 
+										<field name="describe" string="Description" force_save="1"/> 
+										<field name="amount_garder" string="Montant gardé" required="1" force_save="1" sum="Total garder"/>
+										<field name="amount_retirer" string="Montant Retiré" force_save="1" sum="Total garder"/>
+										
+									</tree>
+								
+								</field> 
+							</page>
+
+
+						</notebook>
+				
+					</sheet>
+					<div class="oe_chatter">
+					  <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+					  <field name="message_ids" widget="mail_thread"/>
+				  </div>
+				</form>
+      </field>
+    </record>
+
+	<!-- <record id="caisse_depense_rapport_bpjournalier_search_view" model="ir.ui.view">
+        <field name="name">rapport.search.view</field>
+        <field name="model">caisse_depense_rapport.bpjournalier</field>
+        <field name="arch" type="xml">
+           <search string="Rapport BP">
+                <field name="name" />
+                <field name="state" />
+                <field name="beneficiaire"/>
+                <field name="encaisseur_id"/>
+                <field name="statut" filter_domain="[('statut','!=','justify')]"/>
+                <filter name="state" string="State" icon="terp-partner" domain="[]" context="{'group_by':'state'}"/> 
+                <group expand="0" string="Group By">
+                    <filter string="Beneficiaire" name="beneficiaire" context="{'group_by':'beneficiaire'}"/>
+                    <filter string="Encaisseur" context="{'group_by':'encaisseur_id'}"/>
+                    <filter string="Statut" context="{'group_by':'statut'}"/>
+                    <separator/>
+                </group>
+            </search>
+        </field>
+    </record> -->
+
+	<record id="caisse_depense_rapport_bpjournalier_search_view" model="ir.ui.view">
+		<field name="name">rapport.caisse.view.search</field>
+		<field name="model">caisse_depense_rapport.bpjournalier</field>
+		<field name="arch" type="xml">
+			<search string="Rapport BP">
+                <field name="state" />
+                <field name="beneficiaire"/>
+                <field name="encaisseur_id"/>
+				<field name="statut"/>
+				<group>
+					<filter string="Beneficiaire" name="beneficiaire" context="{'group_by':'beneficiaire'}"/>
+					<filter string="Encaisseur" name="encaisseur_id" domain="[('statut','!=','justify')]" context="{'group_by':'encaisseur_id'}"/>
+                    <filter string="Statut" domain="[('statut','!=','justify')]"  name="statut"/>
+                    <separator/>
+				</group>
+			</search>
+		</field>
+	</record>
+
+    
+    <record id="action_caisse_depense_rapport" model="ir.actions.act_window">
+        <field name="name">Rapport bon provisoire</field>
+        <field name="res_model">caisse_depense_rapport.bpjournalier</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="target">current</field>
+        <field name="domain">[]</field>
+        <field name="context">{
+			'search_default_statut':1,
+			}</field>
+        <field name="search_view_id" ref="caisse_depense_rapport_bpjournalier_search_view"/>
+    </record>
+
+	<record id="action_caisse_depense_rapport2" model="ir.actions.act_window">
+        <field name="name">Rapport bon provisoire des Acheteurs </field>
+        <field name="res_model">caisse_depense_rapport.bpjournalier</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_type">form</field>
+        <field name="target">current</field>
+        <field name="domain">[]</field>
+        <field name="context">{
+			'search_default_encaisseur_id':1,
+			}</field>
+        <field name="search_view_id" ref="caisse_depense_rapport_bpjournalier_search_view"/>
+    </record>
+
+	
+	<record id="action_caisse_bpjournalier_line" model="ir.actions.act_window">
+		<field name="name">Caise</field>
+		<field name="res_model">caisse.bpjournalier.line</field>
+		<field name="view_mode">tree,form</field>
+		<field name="view_type">form</field>
+		<field name="target">current</field>
+		<field name="domain">[]</field>
+		<field name="context">\{}</field>
+		<!-- <field name="search_view_id" ref="ir.ui.view" /> -->
+	</record>
+	
+    
+
+    
+    <menuitem 
+        name="Rapport" 
+        id="caisse_depense_rapport.menu_root" 
+        parent="hr_expense.menu_hr_expense_root"
+        sequence="56"/>
+    <menuitem
+        id="rapport_journalier_menu"
+        name="BP"
+        action="action_caisse_depense_rapport"
+        parent="caisse_depense_rapport.menu_root"
+        sequence="1"/>
+
+		<!-- <menuitem
+        id="rapport_journalier_menu3"
+        name="BP des acheteurs"
+        action="action_caisse_depense_rapport2"
+        parent="caisse_depense_rapport.menu_root"
+        sequence="2"/> -->
+   
+    
+  </data>
+</odoo>

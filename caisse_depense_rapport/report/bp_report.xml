@@ -1,0 +1,437 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <template id="template_bash_payment_btn_print_caisse">
+            <t t-call="web.html_container"> 
+                <t t-call="web.internal_layout">
+                    <style>
+                        table {
+                            font-size: 0.8em;
+                           /* margin-top: 1em;*/
+                            width: 100%;
+                            font-family: Verdana, sans-serif;
+                           /* border-collapse: collapse;*/
+                        }
+
+                        /*th {
+                            padding-left: 0.75em;
+                            
+                        }
+                        tr td {
+                            padding: 0 0.5em;
+                        }*/
+
+                        .number {
+                            text-align: right;
+                        }
+                        .cell {
+                            border: 1px solid gray;
+                        }
+                        .cell1 {
+                            /*border-right: 1px solid gray;*/
+                            padding-left: 0.75em;
+                        }
+                        .container {
+                            position: relative;
+                        }
+                        .titre {
+                            text-decoration: underline;
+                            padding-bottom: 0.8 em;
+                        }
+                        .amount {
+                            text-align: right;
+                        }
+                        .total {
+                            width: 100%;
+                            text-align: right;
+                            font-weight: 900;
+                            padding-top: 0.4 em;
+                            position: relative;
+                            right: 1px;
+                            margin-top: 0.4rem;
+                        }
+                        
+                        .sign {
+                            position: relative;
+                            top: 10px;
+                            width=100%;
+                           
+                            
+                        }
+                        .sign-td {
+                            font-weight: 700;
+                        }
+                       /* .sign-td::after {
+                            display: block;
+                            width: 80px;
+                            border-bottom: 1px dotted gray;
+                            content: "";
+                        }*/
+                    </style>
+
+                    <!-- BASH 2 -->
+                    <div class="page second-bash" style="page-break-before: always;">
+                        <div class="container">
+                            <table class ='titre' width="100%">
+                                <tr>
+                                    <td width="33%">
+                                    </td>
+                                    <td align="center">
+                                        <b><span>Fiche De Suivi Des Bons Provisoires</span></b>
+                                    </td>
+                                    <td width="33%" align="right">
+                                        <b><span t-esc="time.strftime('%d/%m/%Y')"/></b>
+                                    </td>
+                                </tr>
+                            </table>
+                            <t t-set="val" t-value="0"/>
+                            <t t-set="sub_total" t-value="0"/>
+                            <t t-set="sub_reste" t-value="0"/>
+                            <t t-set="facture_count" t-value="0"/>
+                            <t t-set="reste_count" t-value="0"/>
+                            <t t-set="gader_count" t-value="0"/>
+                            <t t-set="gader_count1" t-value="0"/>
+                            <t t-set="No" t-value="1"/>
+                        </div>
+                        <table>
+                                <thead>
+                                    <tr>
+                                        
+                                        <th></th>
+                                        <th class="cell" style="text-align: center;">Bon Provisoire</th>
+                                        <th class="cell" style="text-align: center;">Facture</th>
+                                        <th class="cell" style="text-align: center;" >RBP</th>
+                                        <th class="cell" style="text-align: center;">Gardé</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                    <tr width="100%" height="100%">
+                                        <!-- no -->
+                                        <td class="cell">
+                                            <table>
+                                                <thead>
+                                                    <th style="text-align: center;">No</th>
+                                                </thead>
+                                            </table>
+                                        </td>
+                                        <!-- BASH  -->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <thead>
+                                                    <th width="10%" style="text-align: right;">Bash no</th>
+                                                    <th width="15%" style="text-align: center;">Date</th>
+                                                    <th width="50%" style="text-align: center;">Description</th>
+                                                    <th width="15%" style="text-align: right;">Montant</th>
+                                                    <th width="10%" style="text-align: right;">Statut</th>
+                                                </thead>
+                                            </table>
+                                        </td>
+                                        <!-- Facture-->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <thead>
+                                                    <th width="33%" style="text-align: center;" >No</th>
+                                                    <th width="33%" style="text-align: center;">Date</th>
+                                                    <th width="33%" style="text-align: right;">Montant</th>
+                                                </thead>
+                                            </table>
+                                        </td>
+                                        <!-- RBP-->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <thead>
+                                                    <th width="25%" style="text-align: center;">No</th>
+                                                    <th width="25%" style="text-align: center;">Date</th>
+                                                    <th width="25%" style="text-align: right;">Montant</th>
+                                                    <th width="25%" style="text-align: right;">D</th>
+                                                </thead>
+                                            </table>
+                                        </td>
+                                        <!-- Gardé -->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <thead>
+                                                    <th width="25%" style="text-align: center;">No</th>
+                                                    <th width="25%" style="text-align: center;">Gardé</th>
+                                                    <th width="25%" style="text-align: right;">Retiré</th>
+                                                    <th width="25%" style="text-align: right;">D</th>
+                                                </thead>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <t t-foreach="docs" t-as="o">
+                                        <t t-set="value" t-value="o"/>
+                                        <tr width="100%" height="100%">
+                                            <!-- no -->
+                                            <td class="cell">
+                                                <table width="100%" height="100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="cell1" width="33%" height="100%"><span t-esc="No"/></td>
+                                                            <t t-set="No" t-value="No + 1"/>
+                                                            
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- BASH  -->
+                                            <td class="cell">
+                                                <table width="100%" height="100%">
+                                                    <tbody>
+                                                        <tr height="100%">
+                                                            <td class="cell1" width="10%" align="right"><span t-field="value.name"/></td> 
+                                                            <td class="cell1" width="15%" align="center"><span t-esc="value.format_date(value.create_date)"/></td> 
+                                                            <td class="cell1" width="50%"><span t-field="value.describe"/></td> 
+                                                            <td class="cell1" width="15%" align="right">
+                                                                <span t-esc="value.amount" t-options="{'widget': 'float', 'precision':0}"/>
+                                                                <t t-set="val" t-value="val + value.amount"/>
+                                                            </td> 
+                                                            <td class="cell1" width="10%" align="right">
+                                                                <span t-field="value.statut"/>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Facture-->
+                                            <td class="cell">
+                                                <table width="100%" height="100%">
+                                                    <tbody>
+                                                        <tr height="100%">
+                                                            <td class="cell1" width="33%" align="center"> 
+                                                                <t t-if="value.facture_ids">
+                                                                    <t t-foreach="value.facture_ids" t-as="line">
+                                                                        <span t-esc="line.numero"/> <br/>
+                                                                    </t>
+                                                                </t>
+                                                            </td>
+                                                            <td class="cell1" width="33%" align="right"> 
+                                                                <t t-if="value.facture_ids">
+                                                                    <t t-foreach="value.facture_ids" t-as="line">
+                                                                        <span t-esc="value.format_date(line.date_fac)"/><br/>
+                                                                    </t>
+                                                                </t> 
+                                                            </td>
+                                                            <td style="text-align: right;" width="33%" class="cell1"> 
+                                                                <t t-if="value.facture_ids">
+                                                                    <t t-foreach="value.facture_ids" t-as="line">
+                                                                        <span t-esc="line.montant" t-options="{'widget': 'float', 'precision':0}"/><br/>
+                                                                        <t t-set="facture_count" t-value="facture_count + line.montant "/>
+                                                                    </t>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- RBP-->
+                                            <td class="cell">
+                                                <table width="100%" height="100%">
+                                                    <tbody>
+                                                        <tr height="100%">
+                                                            <td class="cell1" align="center" height="100%" width="25%">
+                                                                <t t-if="value.reste_ids">
+                                                                    <t t-foreach="value.reste_ids" t-as="line">
+                                                                        <span t-esc="line.numero" /><br/>
+                                                                    </t>
+                                                                </t>
+                                                            </td>
+                                                            <td class="cell1" width="25%" align="center">
+                                                                <t t-if="value.reste_ids">
+                                                                    <t t-foreach="value.reste_ids" t-as="line">
+                                                                        <span t-esc="value.format_date(line.create_date)"/><br/>
+                                                                    </t>
+                                                                </t>
+                                                            </td>
+                                                            <td style="text-align: right;" width="25%" class="cell1">
+                                                                <t t-if="value.reste_ids">
+                                                                    <t t-foreach="value.reste_ids" t-as="line">
+                                                                        <span t-esc="line.montant"  t-options="{'widget': 'float', 'precision':0}"/><br/>
+                                                                        <t t-set="reste_count" t-value="reste_count + line.montant "/>
+                                                                    </t>
+                                                                </t>
+                                                            </td>
+                                                            <td style="text-align: right;"  width="25%" class="cell1" align="right">
+                                                                <span t-field="value.delais"/>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <!-- Gardé -->
+                                            <td class="cell">
+                                                <table width="100%" height="100%">
+                                                    <tbody>
+                                                        <tr height="100%">
+                                                            <td class="cell1" align="center" height="100%" width="25%">
+                                                                <t t-if="value.garder_ids">
+                                                                    <t t-foreach="value.garder_ids" t-as="n">
+                                                                        <span t-esc="value.format_date(n.date_g)"/> <br/>
+                                                                    </t>
+                                                                </t>
+                                                            </td>
+                                                            <td class="cell1" align="center" height="100%" width="25%">
+                                                                <t t-if="value.garder_ids">
+                                                                    <t t-foreach="value.garder_ids" t-as="n">
+                                                                        <span t-esc="n.amount_garder"/> <br/>
+                                                                        <t t-set="gader_count1" t-value="gader_count1 + n.amount_garder"/>
+                                                                    </t>
+                                                                </t>
+                                                            </td>
+                                                            <td class="cell1" align="right" height="100%" width="25%">
+                                                                <t t-if="value.garder_ids">
+                                                                    <t t-foreach="value.garder_ids" t-as="n">
+                                                                        <span t-esc="n.amount_retirer"/> <br/>
+                                                                        <t t-set="gader_count" t-value="gader_count + n.amount_retirer"/>
+                                                                    </t>
+                                                                </t>
+                                                                <!-- <span t-esc="value.garder" t-options="{'widget': 'float', 'precision':0}"/>
+                                                                <t t-set="gader_count" t-value="gader_count + value.garder"/> -->
+                                                            </td>
+                                                            <td class="cell1" align="right" height="100%" width="25%">
+                                                               
+                                                                        <span t-esc="value.delais_garder"/> <br/>
+                                                                   
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr width="100%" height="100%">
+                                        <!-- no -->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="cell1" width="33%" height="100%">
+                                                            T:
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <!-- BASH  -->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <tbody>
+                                                    <tr height="100%">
+                                                        <td  width="10%" align="right"></td> 
+                                                        <td  width="15%" align="center"></td> 
+                                                        <td  width="50%"></td> 
+                                                        <td  width="15%" align="right">
+                                                            <span><t t-esc="val" t-options="{'widget': 'float', 'precision':0}"/></span>
+                                                        </td> 
+                                                        <td  width="10%" align="right">
+                                                           
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <!-- Facture-->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <tbody>
+                                                    <tr height="100%">
+                                                        <td width="33%" align="center"> 
+                                                           
+                                                        </td>
+                                                        <td width="33%" align="right"> 
+
+                                                        </td>
+                                                        <td style="text-align: right;" width="33%"> 
+                                                            <span><t t-esc="facture_count" t-options="{'widget': 'float', 'precision':0}"/></span>
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <!-- RBP-->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <tbody>
+                                                    <tr height="100%">
+                                                        <td  align="center" height="100%" width="25%">
+                                                            
+                                                        </td>
+                                                        <td  width="25%" align="center">
+                                                            
+                                                        </td>
+                                                        <td style="text-align: right;" width="25%" >
+                                                            <span><t t-esc="reste_count" t-options="{'widget': 'float', 'precision':0}"/></span>
+                                                        </td>
+                                                        <td style="text-align: right;"  width="25%"  align="right">
+                                                           
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <!-- Gardé -->
+                                        <td class="cell">
+                                            <table width="100%" height="100%">
+                                                <tbody>
+                                                    <tr height="100%">
+                                                        <td  align="center" height="100%" width="25%">
+                                                            
+                                                        </td>
+                                                        <td  align="center" height="100%" width="25%">
+
+                                                        </td>
+                                                        <td  align="right" height="100%" width="25%">
+                                                            <span><t t-esc="gader_count" t-options="{'widget': 'float', 'precision':0}"/></span>
+                                                        </td>
+                                                        <td  align="right" height="100%" width="25%">
+
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>  
+                                </tbody>
+                        </table>
+                        <div class="total" >  
+                            <t t-set="sous_tot" t-value="gader_count1 - gader_count "/>
+                            <t t-set="sub_total" t-value="facture_count + reste_count + sous_tot "/>
+                            <span>Total BP: <t t-esc="val" t-options="{'widget': 'float', 'precision':0}"/></span><br/>
+                            <span style="border-bottom: 1px solid #000;">Total Reste: <t t-esc="sub_total" t-options="{'widget': 'float', 'precision':0}"/></span>
+                        </div>
+                        <div class="total">  
+                            <t t-set="sub_reste" t-value="val - sub_total"/>
+                            <span> Reste : <t t-esc="sub_reste" t-options="{'widget': 'float', 'precision':0}"/></span>
+                        </div>
+
+                        <div class="sign w-100">
+                            <table width="100%">
+                                <tr>
+                                    <td class="sign-td" width="33%">
+                                        DETENTEUR<br/>__________<br/>__________<br/>__________
+                                    </td>
+                                    <td class="sign-td" align="center">
+                                        VERIFICATEUR<br/>__________<br/>__________<br/>__________
+                                    </td>
+                                    <td class="sign-td" width="33%" align="right">
+                                        SUPERVISEUR<br/>__________<br/>__________<br/>__________
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

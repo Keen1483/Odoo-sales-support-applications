@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record id="sequence_retour_garder" model="ir.sequence">
+            <field name="name">Sequence Garde</field>
+            <field name="code">hr.bash.retour.garder</field>
+            <field name="prefix">RG/</field>
+            <field name="padding">4</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <record id="sequence_retour_garder_line" model="ir.sequence">
+            <field name="name">Sequence Garde line</field>
+            <field name="code">hr.bash.retour.garder.line</field>
+            <field name="prefix">RGL/</field>
+            <field name="padding">4</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+
+        <record id="sequence_retrait_garder" model="ir.sequence">
+            <field name="name">Sequence Garde line</field>
+            <field name="code">hr.bash.retrait.garder</field>
+            <field name="prefix">RT/</field>
+            <field name="padding">4</field>
+            <field name="company_id" ref="base.main_company"/>
+        </record>
+    </data>
+</odoo>

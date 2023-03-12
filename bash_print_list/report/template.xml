@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="template_bash_report_tree_view">
+
+            <t t-if="not o" t-set="o" t-value="doc"/>
+            <t t-set="nbl" t-value="o.nombre_factures()"/>
+            <t t-set="en_lettre" t-value="o.amount_text()"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+            <div class="page position-absolute">
+
+                <t t-if="o.journal_id.type=='cash'">
+                    <div class="header position-relative">
+                        <div class="o_boxed_header">
+                            <div class="row text-center" >
+                                <div class="col-12 text-center">
+                                    <h1 class="text-center">BORDEREAU DE PAIEMENT</h1>
+                                </div>
+
+
+                             </div>
+                        </div>
+                        <!--<div>-->
+                            <!--<t><span t-esc="time.strftime('%d/%m/%Y: %H:%M:%S')" style="font-size:10px"/></t>-->
+                        <!--</div>-->
+
+                        <div class="row" style="font-size:10px">
+                            <div class="col-4">
+                                <span><b>CR  </b></span>
+                                <span t-field="o.create_date"></span>
+                                <span t-esc="o.get_initiaux(o.sudo().create_uid.name)"/>
+                            </div>
+                            <!--<div class="col-8">
+
+                            </div>-->
+                            <div class="col-4">
+                                <span><b>MJ  </b></span>
+                                <span t-field="o.write_date"/>
+                                <t t-foreach="o.sudo().write_uid" t-as="ben">
+                                    <span t-esc="o.get_initiaux(ben.name)"/>
+                                </t>
+                            </div>
+                            <div class="col-4">
+                                <span><b>P   </b></span>
+                                <span t-esc="time.strftime('%d/%m/%Y %H:%M:%S')"/>
+                                <t><span t-esc="o.get_initiaux(user.name)"/></t>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:100px;">
+                                <div class="col-6">
+                                    Date de Réglement: <span t-field="o.payment_date"/>
+                                </div>
+                                <div class="col-6 float-right" style="text-align:left;padding-top:10px;padding-bottom:10px;" t-if="o.amount" >
+                                    <t t-if="o.fournisseur_divers">
+                                        <strong>Fournisseur: </strong>FD/<span t-field="o.fournisseur_divers"/>
+                                    </t>
+                                    <t t-else="">
+                                        <strong>Fournisseur: </strong><span t-field="o.partner_id"/>
+                                    </t>
+
+
+                                </div>
+
+                            </div>
+                            <!--<div class="col-2">-->
+                                <!--<t t-if="o.imprime==''">-->
+                                    <!--&lt;!&ndash;<t t-esc="o.write({'imprime':'copie'})"/>&ndash;&gt;-->
+                                    <!--<t t-esc="o.imprime = 'copie'"/>-->
+                                    <!--&lt;!&ndash;<span t-field="o.write({'imprime':'copie'})"/>&ndash;&gt;-->
+                                <!--</t>-->
+                                <!--<t t-else=""><span t-field="imprime"/></t>-->
+                            <!--</div>-->
+
+                            <div class="row">
+                                <div class="col-6" style="padding-left:20px;padding-bottom:10px;">
+                                    <t t-if="o.journal_id.type == 'cash'">
+                                        <t t-set="k" t-value="o.name"/>
+                                        <!--<t t-esc="k.split('/')[-1]"/>-->
+                                        <t t-if="o.name==False"><h6><strong><span>Accusé de règlement No: E </span></strong></h6></t>
+                                        <t t-else="">
+                                            <h6><strong><span>Accusé de règlement No: <t t-esc="k.split('/')[0]"/>/<t t-esc="k.split('/')[-1]"/></span></strong></h6>
+                                        </t>
+
+                                    </t>
+                                    <t t-elif="o.journal_id.type == 'bank'">
+                                        <h6><strong><span>Accusé de règlement No ------------- </span></strong></h6>
+                                    </t>
+                                </div>
+                                <t t-if="o.type !='baf'">
+                                    <div class="col-6">
+                                        <strong>Nombre de Facture: </strong><span t-esc="nbl[o.id]"/>
+                                    </div>
+                                </t>
+                            </div>
+                    </div>
+                </t>
+                <t t-set="o" t-value="o.with_context(lang=lang)"/>
+
+                <t t-if="o.journal_id.type=='cash'">
+                    <t t-if="o.type=='payment_forni'">
+                        <div class="article" style="padding-bottom:120px;">
+
+                          <div class="row">
+
+                              <div class="col-12">
+                                <table class="table table-sm o_main_table" style="font-size:13px;">
+                                    <t t-set="qty" t-value="0"/>
+                                    <thead >
+                                        <tr>
+                                            <th><span>Numéro de Facture</span></th>
+                                            <th class="text-right"><strong><span>Date de Facture</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Facture</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Règlement</span></strong></th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+
+
+                                        <tr t-foreach="o.payment_lines" t-as="inv">
+                                            <td ><span t-field="inv.invoice_id.reference"/></td>
+                                            <td class="text-right" ><span t-field="inv.date_invoice"/></td>
+                                            <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                            <td class="text-right" t-else="" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                            <td class="text-right"  style="background-color:rgb(243,243,243);">
+                                                <t t-if="inv.invoice_id.type == 'in_refund'">
+                                                     -<span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                            </td>
+
+                                            <!--<td class="text-right"><span t-esc="o._get_invoice_payment_amount(inv)" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>-->
+                                            <!--<td><span t-field="inv.invoice_id.residual"/></td>-->
+                                        </tr>
+
+
+
+                                    </tbody>
+                                </table>
+                              </div>
+
+                          </div>
+                            <div id="total" class="row justify-content-end">
+                                <div class="col-4" style="margin-top:50px;">
+                                    <table class="table table-sm" style="font-size:16px;">
+                                        <tr class="border-black">
+                                            <td><strong>Total Facture</strong></td>
+                                            <td class="text-right"><span t-esc=" sum(i.amount for i in o.payment_lines if i.type !='Avoir')" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Crédit</td>
+                                            <td class="text-right">
+                                                <t t-if="o.montant_avoir == 0">
+                                                    <span t-field="o.montant_avoir" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="o.montant_avoir" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-black o_total">
+                                            <td><strong>Net à Payer</strong></td>
+                                            <td class="text-right"><span t-esc="o.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-12" style="margin-top:25px;">
+                                <t t-if="en_lettre[o.id]">
+                                    <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-if="o.type == 'baf'">
+                        <div class="article">
+
+                          <div class="row">
+
+                              <div class="col-12">
+                                <table class="table table-sm o_main_table" style="font-size:13px;" >
+                                    <thead >
+                                        <tr>
+                                            <th><span>Numéro de Ligne</span></th>
+                                            <th class="text-right"><strong><span>Référence</span></strong></th>
+                                            <th class="text-right"><strong><span>Date de Versement</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Règlement</span></strong></th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+
+
+                                        <tr t-foreach="o.payment_lines" t-as="inv">
+                                            <td><span t-esc="inv_index + 1" /></td>
+                                            <td class="text-right"><span t-field="inv.communication"/></td>
+                                            <td class="text-right" ><span t-field="inv.payment_date"/></td>
+                                            <td class="text-right"  style="background-color:rgb(243,243,243);">
+                                                <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+
+                                            </td>
+
+                                            <!--<td class="text-right"><span t-esc="o._get_invoice_payment_amount(inv)" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>-->
+                                            <!--<td><span t-field="inv.invoice_id.residual"/></td>-->
+                                        </tr>
+
+
+
+                                    </tbody>
+                                </table>
+                              </div>
+
+                          </div>
+                            <div id="total" class="row justify-content-end">
+                                <div class="col-4" style="margin-top:50px;">
+                                    <table class="table table-sm">
+                                        <tr class="border-black">
+                                            <td><strong>Total</strong></td>
+                                           <!--  <span t-esc="sum(line.amount for line in o.payment_lines)"/> -->
+                                            <td class="text-right"><span t-esc="sum(line.amount for line in o.payment_lines)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-12" style="margin-top:25px;">
+                                <t t-if="en_lettre[o.id]">
+                                    <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <t t-if="o.journal_id.type=='cash'">
+
+                <div class="footer position-relative">
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12" >
+                                <div class="row">
+                                    <div class="col-7" >
+                                        <strong><span style="text-decoration:underline;">Observation:  </span><span t-field="o.communication"/></strong>
+                                        <div class="row" style="margin-top:90px;">
+                                            <div class="col-3" >
+                                                <strong><span>Preparateur</span></strong>
+                                            </div>
+                                            <div class="col-3" >
+                                                <strong><span>Approbation</span></strong>
+                                            </div>
+                                            <div class="col-3">
+                                                <strong><span>Payeur</span></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                     <div class="col-5" style=" margin-top:0px;">
+                                        <strong><span>Bénéficiaire:</span></strong>
+                                         <div class="col-12" style="margin-top:16px">
+                                            <span>Nom:------------</span>
+                                         </div>
+                                        <div class="col-12" style=" margin-top:16px">
+                                            <span>No CNI:------------</span>
+                                        </div>
+                                         <div class="col-12" style="margin-top:16px">
+                                            <span>Date:------------</span>
+                                        </div>
+                                        <div class="col-12" style=" margin-top:16px;margin-bottom:16px;">
+                                            <span>Signature:------------</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <div t-field="company.report_footer"/>
+                        <div t-if="report_type == 'pdf'">
+                            Page: <span class="page"/> / <span class="topage"/>
+                        </div>
+                    </div>
+                </div>
+
+                </t>
+
+            </div>
+            <div class="page position-absolute" style="page-break-before: always;">
+
+                <t t-if="o.journal_id.type=='cash'">
+                    <div class="header position-relative">
+                        <div class="o_boxed_header">
+                            <div class="row text-center" >
+                                <div class="col-12 text-center">
+                                    <h1 class="text-center">BORDEREAU DE PAIEMENT</h1>
+                                </div>
+
+
+                             </div>
+                        </div>
+                        <!--<div>-->
+                            <!--<t><span t-esc="time.strftime('%d/%m/%Y: %H:%M:%S')" style="font-size:10px"/></t>-->
+                        <!--</div>-->
+
+                        <div class="row" style="font-size:10px">
+                            <div class="col-4">
+                                <span><b>CR  </b></span>
+                                <span t-field="o.create_date"></span>
+                                <span t-esc="o.get_initiaux(o.sudo().create_uid.name)"/>
+                            </div>
+                            <!--<div class="col-8">
+
+                            </div>-->
+                            <div class="col-4">
+                                <span><b>MJ  </b></span>
+                                <span t-field="o.write_date"/>
+                                <t t-foreach="o.sudo().write_uid" t-as="ben">
+                                    <span t-esc="o.get_initiaux(ben.name)"/>
+                                </t>
+                            </div>
+                            <div class="col-4">
+                                <span><b>P   </b></span>
+                                <span t-esc="time.strftime('%d/%m/%Y %H:%M:%S')"/>
+                                <t><span t-esc="o.get_initiaux(user.name)"/></t>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:100px;">
+                                <div class="col-6">
+                                    Date de Réglement: <span t-field="o.payment_date"/>
+                                </div>
+                                <div class="col-6 float-right" style="text-align:left;padding-top:10px;padding-bottom:10px;" t-if="o.amount" >
+                                    <t t-if="o.fournisseur_divers">
+                                        <strong>Fournisseur: </strong>FD/<span t-field="o.fournisseur_divers"/>
+                                    </t>
+                                    <t t-else="">
+                                        <strong>Fournisseur: </strong><span t-field="o.partner_id"/>
+                                    </t>
+
+
+                                </div>
+
+                            </div>
+                            <!--<div class="col-2">-->
+                                <!--<t t-if="o.imprime==''">-->
+                                    <!--&lt;!&ndash;<t t-esc="o.write({'imprime':'copie'})"/>&ndash;&gt;-->
+                                    <!--<t t-esc="o.imprime = 'copie'"/>-->
+                                    <!--&lt;!&ndash;<span t-field="o.write({'imprime':'copie'})"/>&ndash;&gt;-->
+                                <!--</t>-->
+                                <!--<t t-else=""><span t-field="imprime"/></t>-->
+                            <!--</div>-->
+
+                            <div class="row">
+                                <div class="col-6" style="padding-left:20px;padding-bottom:10px;">
+                                    <t t-if="o.journal_id.type == 'cash'">
+                                        <t t-set="k" t-value="o.name"/>
+                                        <!--<t t-esc="k.split('/')[-1]"/>-->
+                                        <t t-if="o.name==False"><h6><strong><span>Accusé de règlement No: E </span></strong></h6></t>
+                                        <t t-else="">
+                                            <h6><strong><span>Accusé de règlement No: <t t-esc="k.split('/')[0]"/>/<t t-esc="k.split('/')[-1]"/></span></strong></h6>
+                                        </t>
+
+                                    </t>
+                                    <t t-elif="o.journal_id.type == 'bank'">
+                                        <h6><strong><span>Accusé de règlement No ------------- </span></strong></h6>
+                                    </t>
+
+                                </div>
+                                <t t-if="o.type !='baf'">
+                                    <div class="col-6">
+                                        <strong>Nombre de Facture: </strong><span t-esc="nbl[o.id]"/>
+                                    </div>
+                                </t>
+                            </div>
+                    </div>
+                </t>
+                <t t-set="o" t-value="o.with_context(lang=lang)"/>
+
+                <t t-if="o.journal_id.type=='cash'">
+                    <t t-if="o.type=='payment_forni'">
+                        <div class="article">
+
+                          <div class="row">
+
+                              <div class="col-12">
+                                <table class="table table-sm o_main_table" style="font-size:13px;" >
+                                    <t t-set="qty" t-value="0"/>
+                                    <thead >
+                                        <tr>
+                                            <th><span>Numéro de Facture</span></th>
+                                            <th class="text-right"><strong><span>Date de Facture</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Facture</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Règlement</span></strong></th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+
+
+                                        <tr t-foreach="o.payment_lines" t-as="inv">
+                                            <td ><span t-field="inv.invoice_id.reference"/></td>
+                                            <td class="text-right" ><span t-field="inv.date_invoice"/></td>
+                                            <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                            <td class="text-right" t-else="" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                            <td class="text-right"  style="background-color:rgb(243,243,243);">
+                                                <t t-if="inv.invoice_id.type == 'in_refund'">
+                                                     -<span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                            </td>
+
+                                            <!--<td class="text-right"><span t-esc="o._get_invoice_payment_amount(inv)" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>-->
+                                            <!--<td><span t-field="inv.invoice_id.residual"/></td>-->
+                                        </tr>
+
+
+
+                                    </tbody>
+                                </table>
+                              </div>
+
+                          </div>
+                            <div id="total" class="row justify-content-end">
+                                <div class="col-4" style="margin-top:50px;">
+                                    <table class="table table-sm" style="font-size:16px;">
+                                        <tr class="border-black">
+                                            <td><strong>Total Facture</strong></td>
+                                            <td class="text-right"><span t-esc=" sum(i.amount for i in o.payment_lines if i.type !='Avoir')" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Crédit</td>
+                                            <td class="text-right">
+                                                <t t-if="o.montant_avoir == 0">
+                                                    <span t-field="o.montant_avoir" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="o.montant_avoir" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-black o_total">
+                                            <td><strong>Net à Payer</strong></td>
+                                            <td class="text-right"><span t-esc="o.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-12" style="margin-top:25px;">
+                                <t t-if="en_lettre[o.id]">
+                                    <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-if="o.type == 'baf'">
+                        <div class="article">
+
+                          <div class="row">
+
+                              <div class="col-12">
+                                <table class="table table-sm o_main_table" style="font-size:13px;" >
+                                    <thead >
+                                        <tr>
+                                            <th><span>Numéro de Ligne</span></th>
+                                            <th class="text-right"><strong><span>Référence</span></strong></th>
+                                            <th class="text-right"><strong><span>Date de Versement</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Règlement</span></strong></th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+
+
+                                        <tr t-foreach="o.payment_lines" t-as="inv">
+                                            <td><span t-esc="inv_index + 1" /></td>
+                                            <td class="text-right"><span t-field="inv.communication"/></td>
+                                            <td class="text-right" ><span t-field="inv.payment_date"/></td>
+                                            <td class="text-right"  style="background-color:rgb(243,243,243);">
+                                                <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+
+                                            </td>
+
+                                            <!--<td class="text-right"><span t-esc="o._get_invoice_payment_amount(inv)" t-options="{'widget': 'monetary', 'display_currency': inv.currency_id}"/></td>-->
+                                            <!--<td><span t-field="inv.invoice_id.residual"/></td>-->
+                                        </tr>
+
+
+
+                                    </tbody>
+                                </table>
+                              </div>
+
+                          </div>
+                            <div id="total" class="row justify-content-end">
+                                <div class="col-4" style="margin-top:50px;">
+                                    <table class="table table-sm">
+                                        <tr class="border-black">
+                                            <td><strong>Total</strong></td>
+                                           <!--  <span t-esc="sum(line.amount for line in o.payment_lines)"/> -->
+                                            <td class="text-right"><span t-esc="sum(line.amount for line in o.payment_lines)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-12" style="margin-top:25px;">
+                                <t t-if="en_lettre[o.id]">
+                                    <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <t t-if="o.journal_id.type=='cash'">
+
+                    <div class="footer position-relative">
+
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12" >
+                                    <div class="row">
+                                        <div class="col-7" >
+                                            <strong><span style="text-decoration:underline;">Observation:  </span><span t-field="o.communication"/></strong>
+                                            <div class="row" style="margin-top:90px;">
+                                                <div class="col-3" >
+                                                    <strong><span>Preparateur</span></strong>
+                                                </div>
+                                                <div class="col-3" >
+                                                    <strong><span>Approbation</span></strong>
+                                                </div>
+                                                <div class="col-3">
+                                                    <strong><span>Payeur</span></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                         <div class="col-5" style=" margin-top:0px;">
+                                            <strong><span>Bénéficiaire:</span></strong>
+                                             <div class="col-12" style="margin-top:16px">
+                                                <span>Nom:------------</span>
+                                             </div>
+                                            <div class="col-12" style=" margin-top:16px">
+                                                <span>No CNI:------------</span>
+                                            </div>
+                                             <div class="col-12" style="margin-top:16px">
+                                                <span>Date:------------</span>
+                                            </div>
+                                            <div class="col-12" style=" margin-top:16px;margin-bottom:16px;">
+                                                <span>Signature:------------</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <div t-field="company.report_footer"/>
+                            <div t-if="report_type == 'pdf'">
+                                Page: <span class="page"/> / <span class="topage"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </t>
+
+            </div>
+            <div class="page position-absolute" style=" page-break-before: always;">
+
+                <t t-if="o.journal_id.type=='cash'">
+                    <div class="header position-relation">
+                        <div class="o_boxed_header">
+                            <div class="row text-center" >
+                                <div class="col-12 text-center">
+                                    <h1 class="text-center">BORDEREAU DE PAIEMENT</h1>
+                                </div>
+
+
+                             </div>
+                        </div>
+                        <!--<div>-->
+                            <!--<t><span t-esc="time.strftime('%d/%m/%Y: %H:%M:%S')" style="font-size:10px"/></t>-->
+                        <!--</div>-->
+
+                        <div class="row" style="font-size:10px">
+                            <div class="col-4">
+                                <span><b>CR  </b></span>
+                                <span t-field="o.create_date"></span>
+                                <span t-esc="o.get_initiaux(o.sudo().create_uid.name)"/>
+                            </div>
+
+                            <div class="col-4">
+                                <span><b>MJ  </b></span>
+                                <span t-field="o.write_date"/>
+                                <t t-foreach="o.sudo().write_uid" t-as="ben">
+                                    <span t-esc="o.get_initiaux(ben.name)"/>
+                                </t>
+                            </div>
+                            <div class="col-4">
+                                <span><b>P   </b></span>
+                                <span t-esc="time.strftime('%d/%m/%Y %H:%M:%S')"/>
+                                <t><span t-esc="o.get_initiaux(user.name)"/></t>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:100px;">
+                                <div class="col-6">
+                                    Date de Réglement: <span t-field="o.payment_date"/>
+                                </div>
+                                <div class="col-6 float-right" style="text-align:left;padding-top:10px;padding-bottom:10px;" t-if="o.amount" >
+                                    <t t-if="o.fournisseur_divers">
+                                        <strong>Fournisseur: </strong>FD/<span t-field="o.fournisseur_divers"/>
+                                    </t>
+                                    <t t-else="">
+                                        <strong>Fournisseur: </strong><span t-field="o.partner_id"/>
+                                    </t>
+
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6" style="padding-left:20px;padding-bottom:10px;">
+                                    <t t-if="o.journal_id.type == 'cash'">
+                                        <t t-set="k" t-value="o.name"/>
+                                        <!--<t t-esc="k.split('/')[-1]"/>-->
+                                        <t t-if="o.name==False"><h6><strong><span>Accusé de règlement No: E </span></strong></h6></t>
+                                        <t t-else="">
+                                            <h6><strong><span>Accusé de règlement No: <t t-esc="k.split('/')[0]"/>/<t t-esc="k.split('/')[-1]"/></span></strong></h6>
+                                        </t>
+
+                                    </t>
+                                    <t t-elif="o.journal_id.type == 'bank'">
+                                        <h6><strong><span>Accusé de règlement No ------------- </span></strong></h6>
+                                    </t>
+
+                                </div>
+                                <t t-if="o.type !='baf'">
+                                    <div class="col-6">
+                                        <strong>Nombre de Facture: </strong><span t-esc="nbl[o.id]"/>
+                                    </div>
+                                </t>
+                            </div>
+                    </div>
+                </t>
+                <t t-set="o" t-value="o.with_context(lang=lang)"/>
+
+                <t t-if="o.journal_id.type=='cash'">
+                    <t t-if="o.type=='payment_forni'">
+                        <div class="article">
+
+                          <div class="row">
+
+                              <div class="col-12">
+                                <table class="table table-sm o_main_table" style="font-size:13px;" >
+                                    <t t-set="qty" t-value="0"/>
+                                    <thead >
+                                        <tr>
+                                            <th><span>Numéro de Facture</span></th>
+                                            <th class="text-right"><strong><span>Date de Facture</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Facture</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Règlement</span></strong></th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+
+
+                                        <tr t-foreach="o.payment_lines" t-as="inv">
+                                            <td ><span t-field="inv.invoice_id.reference"/></td>
+                                            <td class="text-right" ><span t-field="inv.date_invoice"/></td>
+                                            <td class="text-right" t-if="inv.invoice_id.type == 'in_refund'" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                            <td class="text-right" t-else="" ><span t-field="inv.amount_invoice" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                            <td class="text-right"  style="background-color:rgb(243,243,243);">
+                                                <t t-if="inv.invoice_id.type == 'in_refund'">
+                                                     -<span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+
+
+
+                                    </tbody>
+                                </table>
+                              </div>
+
+                          </div>
+                            <div id="total" class="row justify-content-end">
+                                <div class="col-4" style="margin-top:50px;">
+                                    <table class="table table-sm" style="font-size:16px;">
+                                        <tr class="border-black">
+                                            <td><strong>Total Facture</strong></td>
+                                            <td class="text-right"><span t-esc=" sum(i.amount for i in o.payment_lines if i.type !='Avoir')" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Crédit</td>
+                                            <td class="text-right">
+                                                <t t-if="o.montant_avoir == 0">
+                                                    <span t-field="o.montant_avoir" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="o.montant_avoir" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr class="border-black o_total">
+                                            <td><strong>Net à Payer</strong></td>
+                                            <td class="text-right"><span t-esc="o.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-12" style="margin-top:25px;">
+                                <t t-if="en_lettre[o.id]">
+                                    <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-if="o.type == 'baf'">
+                        <div class="article">
+
+                          <div class="row">
+
+                              <div class="col-12">
+                                <table class="table table-sm o_main_table" style="font-size:13px;" >
+                                    <thead >
+                                        <tr>
+                                            <th><span>Numéro de Ligne</span></th>
+                                            <th class="text-right"><strong><span>Référence</span></strong></th>
+                                            <th class="text-right"><strong><span>Date de Versement</span></strong></th>
+                                            <th class="text-right"><strong><span>Montant Règlement</span></strong></th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+
+
+                                        <tr t-foreach="o.payment_lines" t-as="inv">
+                                            <td><span t-esc="inv_index + 1" /></td>
+                                            <td class="text-right"><span t-field="inv.communication"/></td>
+                                            <td class="text-right" ><span t-field="inv.payment_date"/></td>
+                                            <td class="text-right"  style="background-color:rgb(243,243,243);">
+                                                <span t-field="inv.amount" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                              </div>
+
+                          </div>
+                            <div id="total" class="row justify-content-end">
+                                <div class="col-4" style="margin-top:50px;">
+                                    <table class="table table-sm">
+                                        <tr class="border-black">
+                                            <td><strong>Total</strong></td>
+                                           <!--  <span t-esc="sum(line.amount for line in o.payment_lines)"/> -->
+                                            <td class="text-right"><span t-esc="sum(line.amount for line in o.payment_lines)" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-12" style="margin-top:25px;">
+                                <t t-if="en_lettre[o.id]">
+                                    <strong>Montant en Lettre: </strong><span t-esc="en_lettre[o.id]"/> CFA
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <t t-if="o.journal_id.type=='cash'">
+
+                    <div class="footer position-relative">
+
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12" >
+                                    <div class="row">
+                                        <div class="col-7" >
+                                            <strong><span style="text-decoration:underline;">Observation:  </span><span t-field="o.communication"/></strong>
+                                            <div class="row" style="margin-top:90px;">
+                                                <div class="col-3" >
+                                                    <strong><span>Preparateur</span></strong>
+                                                </div>
+                                                <div class="col-3" >
+                                                    <strong><span>Approbation</span></strong>
+                                                </div>
+                                                <div class="col-3">
+                                                    <strong><span>Payeur</span></strong>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                         <div class="col-5" style=" margin-top:0px;">
+                                            <strong><span>Bénéficiaire:</span></strong>
+                                             <div class="col-12" style="margin-top:16px">
+                                                <span>Nom:------------</span>
+                                             </div>
+                                            <div class="col-12" style=" margin-top:16px">
+                                                <span>No CNI:------------</span>
+                                            </div>
+                                             <div class="col-12" style="margin-top:16px">
+                                                <span>Date:------------</span>
+                                            </div>
+                                            <div class="col-12" style=" margin-top:16px;margin-bottom:16px;">
+                                                <span>Signature:------------</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <div t-field="company.report_footer"/>
+                            <div t-if="report_type == 'pdf'">
+                                Page: <span class="page"/> / <span class="topage"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </t>
+
+            </div>
+        </template>
+
+        <template id="template_bash_report_receipt">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="lang" t-value="o.partner_id.lang"/>
+                    <t t-if="o.journal_id.type=='bank' and o.type=='payment_forni'">
+                        <t t-call="bash_print_list.template_bash_report_chq" t-lang="lang"/>
+                    </t>
+                    <t t-else="o.journal_id.type=='cash'">
+                        <t t-call="bash_print_list.template_bash_report_tree_view" t-lang="lang"/>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

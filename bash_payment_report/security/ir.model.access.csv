@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bash_payment_report_admin,bash_payment_report,model_account_bash_payment,group_bash_payment_managers,1,1,1,1
+
+access_global_account_bash_payment,global_account_bash_payment,model_global_account_bash_payment,group_bash_payment_managers,1,1,1,1

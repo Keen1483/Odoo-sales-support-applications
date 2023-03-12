@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="web_favicon.list">
+      <field name="name">web_favicon list</field>
+      <field name="model">web_favicon.web_favicon</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="web_favicon.action_window">
+      <field name="name">web_favicon window</field>
+      <field name="res_model">web_favicon.web_favicon</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="web_favicon.action_server">
+      <field name="name">web_favicon server</field>
+      <field name="model_id" ref="model_web_favicon_web_favicon"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="web_favicon" id="web_favicon.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="web_favicon.menu_1" parent="web_favicon.menu_root"/>
+    <menuitem name="Menu 2" id="web_favicon.menu_2" parent="web_favicon.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="web_favicon.menu_1_list" parent="web_favicon.menu_1"
+              action="web_favicon.action_window"/>
+    <menuitem name="Server to list" id="web_favicon" parent="web_favicon.menu_2"
+              action="web_favicon.action_server"/>
+    -->
+  </data>
+</odoo>

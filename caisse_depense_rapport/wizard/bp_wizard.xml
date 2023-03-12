@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id='wizard_form_bp'>
+			<field name="name">account bash payment</field>
+			<field name='model'>account.bash.payment.wizard</field>
+			<field name="arch" type="xml">
+				<form>
+					
+                    <group>
+						<field name="bp_id" required="1" invisible="1"/>
+					</group>
+					<notebook>
+                        <page>
+                            <field name="justication_bp" required="1" placeholder="justification ici......" />
+                        </page>
+                    </notebook>
+						
+					
+					
+					<footer>
+						<button name="method_hors_justification" string="valider" type="object" class="btn-primary"/>
+						<button string="cancel" class="btn-secondary" special="cancel"/>
+					</footer>
+				</form>
+			</field>
+		</record>
+
+
+		<record model="ir.actions.act_window" id='action_wizard_bp'>
+			<field name="name">Blocage BP</field>
+			<field name="res_model">account.bash.payment.wizard</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+			<field name='view_id' ref="wizard_form_bp"/>
+			<field name='target'>new</field>
+		</record>
+        
+        
+    
+    </data>
+    
+</odoo>

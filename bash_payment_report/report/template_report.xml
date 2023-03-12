@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <template id="template_bash_payment_report">
+            <link rel="stylesheet" href="../static/src/scss/style.scss"/>
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <style>
+                        * {
+                            font-family: 'Poppins', sans-serif;
+                        }
+
+                        table {
+                            margin-top: 1em;
+                            width: 100%;
+                        }
+
+                        tr {
+                            border-bottom: 1px solid gray;
+                            text-align: left;
+                        }
+
+                        th:not(:first-child) {
+                            padding-left: 0.75em;
+                        }
+
+                        tr td:not(:first-child) {
+                            padding: 0.75em;
+                        }
+                    </style>
+
+                    <!--BASH 1-->
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <div class="container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fournisseur</th>
+                                        <th>Bash no</th>
+                                        <th>Reglement</th>
+                                        <th>No Cheque</th>
+                                        <th>Journal</th>
+                                        <th>Bash date</th>
+                                        <th>Bash statut</th>
+                                        <th>Bash nbr facture</th>
+                                        <th>Bash montant</th>
+                                        <th>Bash crée le</th>
+                                        <th>Bash crée par</th>
+                                        <th>Bash Date MAJ</th>
+                                        <th>Bash MAJ par</th>
+                                        <th>Bash observation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach='data' t-as='bash'>
+                                        <tr>
+                                            <!--Fournisseur-->
+                                            <td><span><t t-esc='bash["partner"]'/></span></td>
+                                            <!--Bash no-->
+                                            <td><span><t t-esc='bash["bash_no"]'/></span></td>
+                                            <!--Reglement-->
+                                            <td><span><t t-esc='bash["rule"]'/></span></td>
+                                            <!--No Cheque-->
+                                            <td><span><t t-esc='bash["no_cheque"]'/></span></td>
+                                            <!--Journal-->
+                                            <td><span><t t-esc='bash["journal"]'/></span></td>
+                                            <!--Bash date-->
+                                            <td><span><t t-esc='bash["bash_date"]'/></span></td>
+                                            <!--Bash statut-->
+                                            <td><span><t t-esc='bash["bash_status"]'/></span></td>
+                                            <!--Bash nbr facture-->
+                                            <td><span><t t-esc='number_of_bash_selected'/></span></td>
+                                            <!--Bash montant-->
+                                            <td><span><t t-esc='bash["bash_amount"]'/></span></td>
+                                            <!--Bash crée le-->
+                                            <td><span><t t-esc='bash["created_at"]'/></span></td>
+                                            <!--Bash crée par-->
+                                            <td><span><t t-esc='bash["created_by"]'/></span></td>
+                                            <!--Bash Date MAJ-->
+                                            <td><span><t t-esc='bash["updated_at"]'/></span></td>
+                                            <!--Bash MAJ par-->
+                                            <td><span><t t-esc='bash["update_by"]'/></span></td>
+                                            <!--Bash observation-->
+                                            <td><span><t t-esc='bash["bash_observation"]'/></span></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!--BASH 2-->
+                    <div class="page" style="page-break-before: always;">
+                        <div class="oe_structure"/>
+                        <div class="container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fournisseur</th>
+                                        <th>Bash no</th>
+                                        <th>Reglement</th>
+                                        <th>No Cheque</th>
+                                        <th>Journal</th>
+                                        <th>Bash date</th>
+                                        <th>Bash statut</th>
+                                        <th>Bash nbr facture</th>
+                                        <th>Bash montant</th>
+                                        <th>Bash crée le</th>
+                                        <th>Bash crée par</th>
+                                        <th>Bash Date MAJ</th>
+                                        <th>Bash MAJ par</th>
+                                        <th>Bash observation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach='data' t-as='bash'>
+                                        <tr>
+                                            <!--Fournisseur-->
+                                            <td><span><t t-esc='bash["partner"]'/></span></td>
+                                            <!--Bash no-->
+                                            <td><span><t t-esc='bash["bash_no"]'/></span></td>
+                                            <!--Reglement-->
+                                            <td><span><t t-esc='bash["rule"]'/></span></td>
+                                            <!--No Cheque-->
+                                            <td><span><t t-esc='bash["no_cheque"]'/></span></td>
+                                            <!--Journal-->
+                                            <td><span><t t-esc='bash["journal"]'/></span></td>
+                                            <!--Bash date-->
+                                            <td><span><t t-esc='bash["bash_date"]'/></span></td>
+                                            <!--Bash statut-->
+                                            <td><span><t t-esc='bash["bash_status"]'/></span></td>
+                                            <!--Bash nbr facture-->
+                                            <td><span><t t-esc='number_of_bash_selected'/></span></td>
+                                            <!--Bash montant-->
+                                            <td><span><t t-esc='bash["bash_amount"]'/></span></td>
+                                            <!--Bash crée le-->
+                                            <td><span><t t-esc='bash["created_at"]'/></span></td>
+                                            <!--Bash crée par-->
+                                            <td><span><t t-esc='bash["created_by"]'/></span></td>
+                                            <!--Bash Date MAJ-->
+                                            <td><span><t t-esc='bash["updated_at"]'/></span></td>
+                                            <!--Bash MAJ par-->
+                                            <td><span><t t-esc='bash["update_by"]'/></span></td>
+                                            <!--Bash observation-->
+                                            <td><span><t t-esc='bash["bash_observation"]'/></span></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!--BASH 3-->
+                    <div class="page" style="page-break-before: always;">
+                        <div class="oe_structure"/>
+                        <div class="container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fournisseur</th>
+                                        <th>Bash no</th>
+                                        <th>Reglement</th>
+                                        <th>No Cheque</th>
+                                        <th>Journal</th>
+                                        <th>Bash date</th>
+                                        <th>Bash statut</th>
+                                        <th>Bash nbr facture</th>
+                                        <th>Bash montant</th>
+                                        <th>Bash crée le</th>
+                                        <th>Bash crée par</th>
+                                        <th>Bash Date MAJ</th>
+                                        <th>Bash MAJ par</th>
+                                        <th>Bash observation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach='data' t-as='bash'>
+                                        <tr>
+                                            <!--Fournisseur-->
+                                            <td><span><t t-esc='bash["partner"]'/></span></td>
+                                            <!--Bash no-->
+                                            <td><span><t t-esc='bash["bash_no"]'/></span></td>
+                                            <!--Reglement-->
+                                            <td><span><t t-esc='bash["rule"]'/></span></td>
+                                            <!--No Cheque-->
+                                            <td><span><t t-esc='bash["no_cheque"]'/></span></td>
+                                            <!--Journal-->
+                                            <td><span><t t-esc='bash["journal"]'/></span></td>
+                                            <!--Bash date-->
+                                            <td><span><t t-esc='bash["bash_date"]'/></span></td>
+                                            <!--Bash statut-->
+                                            <td><span><t t-esc='bash["bash_status"]'/></span></td>
+                                            <!--Bash nbr facture-->
+                                            <td><span><t t-esc='number_of_bash_selected'/></span></td>
+                                            <!--Bash montant-->
+                                            <td><span><t t-esc='bash["bash_amount"]'/></span></td>
+                                            <!--Bash crée le-->
+                                            <td><span><t t-esc='bash["created_at"]'/></span></td>
+                                            <!--Bash crée par-->
+                                            <td><span><t t-esc='bash["created_by"]'/></span></td>
+                                            <!--Bash Date MAJ-->
+                                            <td><span><t t-esc='bash["updated_at"]'/></span></td>
+                                            <!--Bash MAJ par-->
+                                            <td><span><t t-esc='bash["update_by"]'/></span></td>
+                                            <!--Bash observation-->
+                                            <td><span><t t-esc='bash["bash_observation"]'/></span></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

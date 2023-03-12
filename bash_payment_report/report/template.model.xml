@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <template id="template_bash_payment_btn_print">
+            <t t-call="web.html_container">
+                <t t-call="web.internal_layout">
+                    <style>
+                        table {
+                            font-size: 0.8em;
+                            margin-top: 1em;
+                            width: 100%;
+                            font-family: Verdana, sans-serif;
+                        }
+
+                        tr {
+                            border-bottom: 1px solid gray;
+                            text-align: left;
+                        }
+
+                        th:not(:first-child) {
+                            padding-left: 0.75em;
+                        }
+
+                        tr td:not(:first-child) {
+                            padding: 0 0.5em;
+                        }
+
+                        .number {
+                            text-align: right;
+                        }
+
+                        td, th {
+                            white-space: nowrap;
+                        }
+                        tr {
+                            border-bottom: 1px solid gray;
+                        }
+                    </style>
+                    <div class="page first-bash">
+                        <div class="container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fournisseur</th>
+                                        <th>Bash no</th>
+                                        <th>Reg</th>
+                                        <th>No Cheque</th>
+                                        <th>Journal</th>
+                                        <th>Bash date</th>
+                                        <th>Bash statut</th>
+                                        <th>Nbr</th>
+                                        <th>Bash montant</th>
+                                        <th>Bash crée le</th>
+                                        <th>crée par</th>
+                                        <th>Date MAJ</th>
+                                        <th>MAJ par</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="docs" t-as="o">
+                                        <tr>
+                                            <td class="partner"><span t-field="o.fournisseur_print"/></td>
+                                            <td><span t-field="o.bash_no_print"/></td>
+                                            <td><span t-field="o.reglement_print"/></td>
+                                            <td><span t-field="o.no_cheque_print"/></td>
+                                            <td><span t-field="o.journal_print"/></td>
+                                            <td class="date"><span t-esc="o.bash_date_print.strftime('%d.%m.%y')"/></td>
+                                            <td><span t-field="o.bash_status_print"/></td>
+                                            <td class="number"><span t-field="o.bash_nbr_print"/></td>
+                                            <td class="number"><span t-options="{'widget':'float','precision':0}" t-field="o.bash_amount_print"/></td>
+                                            <td class="date"><span t-esc="o.created_at_print.strftime('%d.%m.%y')"/></td>
+                                            <td><span t-field="o.created_by_print"/></td>
+                                            <td class="date"><span t-esc="o.update_at_print.strftime('%d.%m.%y')"/></td>
+                                            <td><span t-field="o.update_by_print"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- BASH 2 -->
+                    <div class="page second-bash" style="page-break-before: always;">
+                        <div class="container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fournisseur</th>
+                                        <th>Bash no</th>
+                                        <th>No Facture</th>
+                                        <th>Journal</th>
+                                        <th>No Piece</th>
+                                        <th>Agence</th>
+                                        <th>statut</th>
+                                        <th>P</th>
+                                        <th>Article</th>
+                                        <th>Montant</th>
+                                        <th>Crée le</th>
+                                        <th>Crée par</th>
+                                        <th>CT le</th>
+                                        <th>CT par</th>
+                                        <th>MAJ le</th>
+                                        <th>MAJ par</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="docs" t-as="o">
+                                        <t t-set="value" t-value="o.format_data()"/>
+                                        <tr>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['founisseur']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['founisseur'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['no_bash']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['no_bash'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['no_fact']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['no_fact'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['journal']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['journal'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['no_piece']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['no_piece'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['agence']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['agence'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['status']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['status'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['period']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['period'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['article']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['article'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['residual']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['residual'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['created_at']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['created_at'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['created_by']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['created_by'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['ct_at']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['ct_at'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['ct_by']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['ct_by'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['maj_at']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['maj_at'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['maj_by']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['maj_by'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- BASH 3 -->
+                    <div class="page third-bash" style="page-break-before: always;">
+                        <div class="container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Fournisseur</th>
+                                        <th>Bash no</th>
+                                        <th>No Facture</th>
+                                        <!-- DATE BRML -->
+                                        <th>DBR</th>
+                                        <!-- BRML-BRML -->
+                                        <th>BR</th>
+                                        <!-- Date Fa -->
+                                        <th>DFA</th>
+                                        <!-- Delai Dfa-BRML -->
+                                        <th>FA</th>
+                                        <!-- Date BC -->
+                                        <th>DBC</th>
+                                        <!-- BC-BRML -->
+                                        <th>BC</th>
+                                        <!-- Date BL -->
+                                        <th>DBL</th>
+                                        <!-- BL-BRML -->
+                                        <th>BL</th>
+                                        <!-- Date BRMC -->
+                                        <th>DSA</th>
+                                        <!-- BRMC-BRML -->
+                                        <th>SA</th>
+                                        <th>Crée le</th>
+                                        <th>Dc-Df</th>
+                                        <th>Date Val</th>
+                                        <th>Dv-Dc</th>
+                                        <th>DV-BR</th>
+                                        <th>Echéance</th>
+                                        <!-- Date paiement -->
+                                        <th>DP</th>
+                                        <th>P-E</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="docs" t-as="o">
+                                        <t t-set="value" t-value="o.format_data()"/>
+                                        <tr>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['founisseur']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['founisseur'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['no_bash']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['no_bash'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['no_fact']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['no_fact'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['date_brml']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['date_brml'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['delai_brml_brml']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['delai_brml_brml'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['date_fact']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['date_fact'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['delai_dfa_brml']" t-as="index">
+                                                            <tr>
+                                                                <td><span t-esc="value['delai_dfa_brml'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['date_bc']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['date_bc'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['delai_bc_brml']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['delai_bc_brml'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['date_bl']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['date_bl'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['delai_bl_brml']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['delai_bl_brml'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['date_brmc']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['date_brmc'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['delai_brmc_brml']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['delai_brmc_brml'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['created_at']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['created_at'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['delai_dc_df']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['delai_dc_df'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['date_validation']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['date_validation'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['delai_dv_dc']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['delai_dv_dc'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['delaitt_brml_dv']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['delaitt_brml_dv'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['date_echeance']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['date_echeance'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['date_payment']" t-as="index">
+                                                            <tr>
+                                                                <td class="date"><span t-esc="value['date_payment'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table>
+                                                    <tbody>
+                                                        <t t-foreach="value['echu_verif']" t-as="index">
+                                                            <tr>
+                                                                <td class="number"><span t-esc="value['echu_verif'][index]"/></td>
+                                                            </tr>
+                                                        </t>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>
